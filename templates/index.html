@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripSync</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <h2>TripSync</h2>
+
+        <a href="#">Home</a>
+        <a href="#">Trips</a>
+        <a href="#">Expenses</a>
+        <a href="#">Checklist</a>
+    </nav>
+
+    <h1>TripSync</h1>
+    <p>Plan together. Travel better.</p>
+<p class="description">
+    Plan trips with your group, organize itineraries, track expenses,
+    vote on activities, and keep everyone on the same page.
+</p>
+    <div class="buttons">
+    <a href="{{ url_for('create_trip') }}">
+        <button>Create a Trip</button>
+    </a>
+
+    <button>Join a Trip</button>
+    </div>
+<section class="features">
+    <h2>Everything Your Group Needs</h2>
+
+    <div class="feature-cards">
+        <div class="card">
+            <h3>📅 Plan Itineraries</h3>
+            <p>Keep your group's plans, activities, and schedule organized in one place.</p>
+        </div>
+
+        <div class="card">
+            <h3>💰 Track Expenses</h3>
+            <p>Keep track of shared costs and know who paid for what.</p>
+        </div>
+
+        <div class="card">
+            <h3>🗳️ Vote Together</h3>
+            <p>Let everyone vote on restaurants, activities, and other trip decisions.</p>
+        </div>
+
+        <div class="card">
+            <h3>✅ Shared Checklist</h3>
+            <p>Create a group checklist so everyone knows what needs to be done.</p>
+        </div>
+    </div>
+</section>
+<footer>
+    <p>&copy; 2026 TripSync | Plan together. Travel better.</p>
+</footer>
+</body>
+</html>
