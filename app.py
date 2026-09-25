@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-# Secret key for login sessions
 app.secret_key = "tripsync-secret-key"
 
 
@@ -54,6 +53,17 @@ def init_db():
             user_id INTEGER NOT NULL,
             FOREIGN KEY (trip_id) REFERENCES trips (id),
             FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    """)
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS pending_invitations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            trip_id INTEGER NOT NULL,
+            email TEXT NOT NULL,
+            invited_by INTEGER NOT NULL,
+            FOREIGN KEY (trip_id) REFERENCES trips (id),
+            FOREIGN KEY (invited_by) REFERENCES users (id)
         )
     """)
 
@@ -240,6 +250,176 @@ def create_trip():
         return redirect("/dashboard")
 
     return render_template("create-trip.html")
+
+
+# -------------------------
+# ADD FRIENDS
+# -------------------------
+
+@app.route("/add-friends", methods=["GET", "POST"])
+def add_friends():
+
+    if "user_id" not in session:
+        return """
+        <h2>Please sign in first.</h2>
+        <a href="/login">Sign In</a>
+        """
+
+    connection = get_db_connection()
+
+    if request.method == "POST":
+
+        trip_id = request.form["trip_id"]
+        email = request.form["email"].strip().lower()
+
+        # Make sure the selected trip belongs to the
+        # person currently signed in.
+        trip = connection.execute(
+            """
+            SELECT *
+            FROM trips
+            WHERE id = ? AND user_id = ?
+            """,
+            (trip_id, session["user_id"])
+        ).fetchone()
+
+        if not trip:
+            connection.close()
+
+            return """
+            <h2>Trip not found</h2>
+            <p>You can only add people to trips you created.</p>
+            <a href="/add-friends">Try Again</a>
+            """
+
+        # Check whether the person already has an account.
+        user = connection.execute(
+            """
+            SELECT *
+            FROM users
+            WHERE LOWER(email) = ?
+            """,
+            (email,)
+        ).fetchone()
+
+        if user:
+
+            # Check whether they are already a member.
+            existing_member = connection.execute(
+                """
+                SELECT *
+                FROM trip_members
+                WHERE trip_id = ? AND user_id = ?
+                """,
+                (trip_id, user["id"])
+            ).fetchone()
+
+            if existing_member:
+
+                connection.close()
+
+                return render_template(
+                    "add-friends.html",
+                    trips=get_user_trips(),
+                    message="That person is already part of this trip."
+                )
+
+            # Add existing user to trip.
+            connection.execute(
+                """
+                INSERT INTO trip_members (trip_id, user_id)
+                VALUES (?, ?)
+                """,
+                (trip_id, user["id"])
+            )
+
+            connection.commit()
+            connection.close()
+
+            return render_template(
+                "add-friends.html",
+                trips=get_user_trips(),
+                message=f"{user['name']} was added to the trip! 🎉"
+            )
+
+        else:
+
+            # Check whether an invitation already exists.
+            existing_invitation = connection.execute(
+                """
+                SELECT *
+                FROM pending_invitations
+                WHERE trip_id = ? AND LOWER(email) = ?
+                """,
+                (trip_id, email)
+            ).fetchone()
+
+            if existing_invitation:
+
+                connection.close()
+
+                return render_template(
+                    "add-friends.html",
+                    trips=get_user_trips(),
+                    message="An invitation has already been created for that email."
+                )
+
+            # Create pending invitation.
+            connection.execute(
+                """
+                INSERT INTO pending_invitations
+                (trip_id, email, invited_by)
+                VALUES (?, ?, ?)
+                """,
+                (trip_id, email, session["user_id"])
+            )
+
+            connection.commit()
+            connection.close()
+
+            return render_template(
+                "add-friends.html",
+                trips=get_user_trips(),
+                message=f"An invitation was created for {email}! 💌"
+            )
+
+    trips = get_user_trips(connection)
+
+    connection.close()
+
+    return render_template(
+        "add-friends.html",
+        trips=trips,
+        message=None
+    )
+
+
+# -------------------------
+# GET USER'S TRIPS
+# -------------------------
+
+def get_user_trips(connection=None):
+
+    close_connection = False
+
+    if connection is None:
+        connection = get_db_connection()
+        close_connection = True
+
+    trips = connection.execute(
+        """
+        SELECT *
+        FROM trips
+        WHERE user_id = ?
+        ORDER BY start_date
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    if close_connection:
+        connection.close()
+
+    return trips
 
 
 # -------------------------
