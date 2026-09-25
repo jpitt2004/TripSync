@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Trips | TripSync</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav>
+        <h2>TripSync</h2>
+
+        <div>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('create_trip') }}">Create Trip</a>
+            <a href="#">My Trips</a>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+
+        <h1>Welcome back, {{ user_name }}! 👋</h1>
+
+        <p>
+            Ready to plan your next adventure? 🌴✈️
+        </p>
+
+        <div class="dashboard-actions">
+
+            <a href="{{ url_for('create_trip') }}">
+                <button>Create a Trip ✈️</button>
+            </a>
+
+            <button>Add Friends 👥</button>
+
+        </div>
+
+        <section class="my-trips">
+
+            <h2>My Trips 🌎</h2>
+
+            {% if trips %}
+
+                <div class="trip-cards">
+
+                    {% for trip in trips %}
+
+                        <div class="trip-card">
+
+                            <h3>{{ trip["trip_name"] }}</h3>
+
+                            <p>📍 {{ trip["destination"] }}</p>
+
+                            <p>
+                                📅 {{ trip["start_date"] }}
+                                -
+                                {{ trip["end_date"] }}
+                            </p>
+
+                            <p>
+                                💰 Budget: ${{ trip["budget"] }}
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="no-trips">
+
+                    <h3>No trips yet! 🌴</h3>
+
+                    <p>
+                        Create your first trip and start planning
+                        with your friends.
+                    </p>
+
+                    <a href="{{ url_for('create_trip') }}">
+                        <button>Create Your First Trip ✨</button>
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect
 import sqlite3
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+
+# Secret key for login sessions
+app.secret_key = "tripsync-secret-key"
 
 
 # -------------------------
@@ -68,7 +71,7 @@ def home():
 
 
 # -------------------------
-# SIGNUP
+# SIGN UP
 # -------------------------
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -81,17 +84,14 @@ def signup():
         password = request.form["password"]
         confirm_password = request.form["confirm_password"]
 
-        # Check passwords
         if password != confirm_password:
             return "Passwords do not match."
 
-        # Hash password before saving
         hashed_password = generate_password_hash(password)
 
         connection = get_db_connection()
 
         try:
-
             connection.execute(
                 """
                 INSERT INTO users (name, email, password)
@@ -117,10 +117,82 @@ def signup():
         return """
         <h2>Account created successfully!</h2>
         <p>Welcome to TripSync.</p>
-        <a href="/">Go Home</a>
+        <a href="/login">Sign In</a>
         """
 
     return render_template("signup.html")
+
+
+# -------------------------
+# LOGIN
+# -------------------------
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        email = request.form["email"]
+        password = request.form["password"]
+
+        connection = get_db_connection()
+
+        user = connection.execute(
+            "SELECT * FROM users WHERE email = ?",
+            (email,)
+        ).fetchone()
+
+        connection.close()
+
+        if user and check_password_hash(user["password"], password):
+
+            session["user_id"] = user["id"]
+            session["user_name"] = user["name"]
+            session["user_email"] = user["email"]
+
+            return redirect("/dashboard")
+
+        return """
+        <h2>Invalid email or password</h2>
+        <p>Please check your information and try again.</p>
+        <a href="/login">Try Again</a>
+        """
+
+    return render_template("login.html")
+
+
+# -------------------------
+# DASHBOARD
+# -------------------------
+
+@app.route("/dashboard")
+def dashboard():
+
+    if "user_id" not in session:
+        return """
+        <h2>Please sign in first.</h2>
+        <a href="/login">Sign In</a>
+        """
+
+    connection = get_db_connection()
+
+    trips = connection.execute(
+        """
+        SELECT *
+        FROM trips
+        WHERE user_id = ?
+        ORDER BY start_date
+        """,
+        (session["user_id"],)
+    ).fetchall()
+
+    connection.close()
+
+    return render_template(
+        "dashboard.html",
+        user_name=session["user_name"],
+        trips=trips
+    )
 
 
 # -------------------------
@@ -130,6 +202,12 @@ def signup():
 @app.route("/create-trip", methods=["GET", "POST"])
 def create_trip():
 
+    if "user_id" not in session:
+        return """
+        <h2>Please sign in first.</h2>
+        <a href="/login">Sign In</a>
+        """
+
     if request.method == "POST":
 
         trip_name = request.form["trip_name"]
@@ -138,20 +216,28 @@ def create_trip():
         end_date = request.form["end_date"]
         budget = request.form["budget"]
 
-        print(
-            trip_name,
-            destination,
-            start_date,
-            end_date,
-            budget
+        connection = get_db_connection()
+
+        connection.execute(
+            """
+            INSERT INTO trips
+            (user_id, trip_name, destination, start_date, end_date, budget)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                session["user_id"],
+                trip_name,
+                destination,
+                start_date,
+                end_date,
+                budget
+            )
         )
 
-        message = f"{trip_name} was created successfully!"
+        connection.commit()
+        connection.close()
 
-        return render_template(
-            "create-trip.html",
-            message=message
-        )
+        return redirect("/dashboard")
 
     return render_template("create-trip.html")
 
