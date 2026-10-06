@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ trip['trip_name'] }} | TripSync</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<nav>
+
+    <h2>TripSync ✈️</h2>
+
+    <div>
+
+        <a href="{{ url_for('dashboard') }}">
+            My Trips
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">Home</a>
+            Home
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            Log Out
+        </a>
+
+    </div>
+
+</nav>
+
+
+<main class="dashboard-container">
+
+    <h1>
+        {{ trip['trip_name'] }} 🌴
+    </h1>
+
+    <p>
+        📍 {{ trip['destination'] }}
+    </p>
+
+    <p>
+        📅 {{ trip['start_date'] }}
+        -
+        {{ trip['end_date'] }}
+    </p>
+
+    <p>
+        💰 Budget:
+        ${{ "%.2f"|format(trip['budget']) }}
+    </p>
+
+
+    <!-- Feature Buttons -->
+
+    <section class="my-trips">
+
+        <h2>Trip Tools</h2>
+
+        <div class="trip-cards">
+
+            <div class="trip-card">
+
+                <h3>📅 Itinerary</h3>
+
+                <p>
+                    View and add trip activities.
+                </p>
+
+                <a href="{{ url_for(
+                    'itinerary',
+                    trip_id=trip['id']
+                ) }}">
+
+                    <button type="button">
+                        Open Itinerary
+                    </button>
+
+                </a>
+
+            </div>
+
+
+            <div class="trip-card">
+
+                <h3>💰 Expenses</h3>
+
+                <p>
+                    Track the group's spending.
+                </p>
+
+                <a href="{{ url_for(
+                    'expenses',
+                    trip_id=trip['id']
+                ) }}">
+
+                    <button type="button">
+                        Open Expenses
+                    </button>
+
+                </a>
+
+            </div>
+
+
+            <div class="trip-card">
+
+                <h3>🗳️ Voting</h3>
+
+                <p>
+                    Let the group vote on decisions.
+                </p>
+
+                <a href="{{ url_for(
+                    'voting',
+                    trip_id=trip['id']
+                ) }}">
+
+                    <button type="button">
+                        Open Voting
+                    </button>
+
+                </a>
+
+            </div>
+
+
+            <div class="trip-card">
+
+                <h3>✅ Checklist</h3>
+
+                <p>
+                    Keep track of trip tasks.
+                </p>
+
+                <a href="{{ url_for(
+                    'checklist',
+                    trip_id=trip['id']
+                ) }}">
+
+                    <button type="button">
+                        Open Checklist
+                    </button>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Members -->
+
+    <section class="my-trips">
+
+        <h2>
+            Trip Members 👥
+        </h2>
+
+        {% if members %}
+
+            <div class="trip-cards">
+
+                {% for member in members %}
+
+                    <div class="trip-card">
+
+                        <h3>
+                            {{ member['name'] }}
+                        </h3>
+
+                        <p>
+                            {{ member['email'] }}
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p>
+                No other members have been added yet.
+            </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <p>
+
+        <a href="{{ url_for('dashboard') }}">
+            ← Back to My Trips
+        </a>
+
+    </p>
+
+</main>
+
+</body>
+
+</html>

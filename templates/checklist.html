@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Checklist | TripSync</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<nav>
+
+    <h2>TripSync ✈️</h2>
+
+    <div>
+
+        <a href="{{ url_for('dashboard') }}">
+            My Trips
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">Home</a>
+            Home
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            Log Out
+        </a>
+
+    </div>
+
+</nav>
+
+
+<main class="dashboard-container">
+
+    <h1>Trip Checklist ✅</h1>
+
+    <p>
+        Keep track of things that need to be packed or completed.
+    </p>
+
+
+    <!-- Choose Trip -->
+
+    <form
+        class="signup-form"
+        method="GET"
+        action="{{ url_for('checklist') }}"
+    >
+
+        <label for="trip_id">
+            Choose a Trip
+        </label>
+
+        <select
+            id="trip_id"
+            name="trip_id"
+            onchange="this.form.submit()"
+            required
+        >
+
+            <option value="">
+                Select a trip
+            </option>
+
+            {% for trip in trips %}
+
+                <option
+                    value="{{ trip['id'] }}"
+                    {% if selected_trip_id == trip['id'] %}
+                        selected
+                    {% endif %}
+                >
+
+                    {{ trip['trip_name'] }}
+
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </form>
+
+
+    {% if selected_trip_id %}
+
+
+    <!-- Add Checklist Item -->
+
+    <section class="my-trips">
+
+        <h2>Add Checklist Item ➕</h2>
+
+        <form
+            class="signup-form"
+            method="POST"
+            action="{{ url_for('checklist') }}"
+        >
+
+            <input
+                type="hidden"
+                name="trip_id"
+                value="{{ selected_trip_id }}"
+            >
+
+            <label for="item">
+                Item
+            </label>
+
+            <input
+                type="text"
+                id="item"
+                name="item"
+                placeholder="Example: Pack sunscreen"
+                required
+            >
+
+            <button type="submit">
+                Add Item ✅
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- Checklist -->
+
+    <section class="my-trips">
+
+        <h2>Trip Checklist</h2>
+
+        {% if items %}
+
+            <div class="trip-cards">
+
+                {% for item in items %}
+
+                    <div class="trip-card">
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'toggle_checklist',
+                                item_id=item['id']
+                            ) }}"
+                        >
+
+                            <button
+                                type="submit"
+                                style="
+                                    font-size:22px;
+                                    border:none;
+                                    background:none;
+                                    cursor:pointer;
+                                "
+                            >
+
+                                {% if item['completed'] %}
+                                    ☑️
+                                {% else %}
+                                    ⬜
+                                {% endif %}
+
+                            </button>
+
+                        </form>
+
+
+                        <div>
+
+                            {% if item['completed'] %}
+
+                                <h3
+                                    style="
+                                        text-decoration:line-through;
+                                        color:#777;
+                                    "
+                                >
+                                    {{ item['item'] }}
+                                </h3>
+
+                                <p>
+                                    Completed ✓
+                                </p>
+
+                            {% else %}
+
+                                <h3>
+                                    {{ item['item'] }}
+                                </h3>
+
+                                <p>
+                                    Not completed
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="no-trips">
+
+                <h3>No checklist items yet! ✅</h3>
+
+                <p>
+                    Add something that needs to be completed.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    <p>
+
+        <a href="{{ url_for('dashboard') }}">
+            ← Back to My Trips
+        </a>
+
+    </p>
+
+</main>
+
+</body>
+</html>

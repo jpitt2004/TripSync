@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses | TripSync</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<nav>
+    <h2>TripSync ✈️</h2>
+
+    <div>
+        <a href="{{ url_for('dashboard') }}">My Trips</a>
+        <a href="{{ url_for('dashboard') }}">Home</a>
+        <a href="{{ url_for('logout') }}">Log Out</a>
+    </div>
+</nav>
+
+<main class="dashboard-container">
+
+    <h1>Expense Tracker 💰</h1>
+
+    <p>
+        Keep track of what your group spends during the trip.
+    </p>
+
+    <!-- Choose Trip -->
+
+    <form class="signup-form"
+          method="GET"
+          action="{{ url_for('expenses') }}">
+
+        <label for="trip_id">Choose a Trip</label>
+
+        <select name="trip_id"
+                id="trip_id"
+                onchange="this.form.submit()"
+                required>
+
+            <option value="">Select a trip</option>
+
+            {% for trip in trips %}
+
+                <option value="{{ trip['id'] }}"
+                    {% if selected_trip_id == trip['id'] %}
+                        selected
+                    {% endif %}>
+
+                    {{ trip['trip_name'] }} -
+                    {{ trip['destination'] }}
+
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </form>
+
+
+    {% if selected_trip_id %}
+
+    <!-- Add Expense -->
+
+    <section class="my-trips">
+
+        <h2>Add Expense ➕</h2>
+
+        <form class="signup-form"
+              method="POST"
+              action="{{ url_for('expenses') }}">
+
+            <input type="hidden"
+                   name="trip_id"
+                   value="{{ selected_trip_id }}">
+
+            <label for="description">
+                Description
+            </label>
+
+            <input
+                type="text"
+                id="description"
+                name="description"
+                placeholder="Example: Dinner"
+                required
+            >
+
+            <label for="amount">
+                Amount
+            </label>
+
+            <input
+                type="number"
+                id="amount"
+                name="amount"
+                min="0"
+                step="0.01"
+                placeholder="45.00"
+                required
+            >
+
+            <button type="submit">
+                Add Expense 💰
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- Total -->
+
+    <section class="my-trips">
+
+        <h2>Total Trip Expenses</h2>
+
+        <div class="trip-card">
+
+            <h3>
+                ${{ "%.2f"|format(total) }}
+            </h3>
+
+        </div>
+
+    </section>
+
+
+    <!-- Expense List -->
+
+    <section class="my-trips">
+
+        <h2>Expenses</h2>
+
+        {% if expenses %}
+
+            <div class="trip-cards">
+
+                {% for expense in expenses %}
+
+                    <div class="trip-card">
+
+                        <h3>
+                            {{ expense['description'] }}
+                        </h3>
+
+                        <p>
+                            💵 ${{ "%.2f"|format(expense['amount']) }}
+                        </p>
+
+                        <p>
+                            👤 Paid by {{ expense['payer'] }}
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="no-trips">
+
+                <h3>No expenses yet! 💰</h3>
+
+                <p>
+                    Add the first expense for this trip.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+    <p>
+        <a href="{{ url_for('dashboard') }}">
+            ← Back to My Trips
+        </a>
+    </p>
+
+</main>
+
+</body>
+</html>

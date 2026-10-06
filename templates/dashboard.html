@@ -5,94 +5,381 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>My Trips | TripSync</title>
+    <title>TripSync - Dashboard</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(
+                135deg,
+                #f8e8ff,
+                #eeeaff,
+                #e7efff
+            );
+            min-height: 100vh;
+            color: #222;
+        }
+
+        nav {
+            height: 95px;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        nav h2 a {
+            color: #7545e8;
+            text-decoration: none;
+        }
+
+        nav div {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        nav div a {
+            color: #222;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        nav div a:hover {
+            color: #7545e8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 60px 25px;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .welcome h1 {
+            color: #7545e8;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            font-size: 20px;
+            color: #555;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            background: linear-gradient(
+                90deg,
+                #7545e8,
+                #e34ca5
+            );
+            box-shadow: 0 7px 18px rgba(117, 69, 232, 0.2);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 34px;
+            margin-bottom: 30px;
+        }
+
+        .trip-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .trip-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 8px 25px rgba(70, 50, 100, 0.08);
+            border-top: 6px solid #7545e8;
+        }
+
+        .trip-card h2 {
+            color: #7545e8;
+            margin-top: 0;
+        }
+
+        .trip-card p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .trip-card a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #7545e8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .trip-card a:hover {
+            text-decoration: underline;
+        }
+
+        .no-trips {
+            background: white;
+            border-radius: 20px;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(70, 50, 100, 0.08);
+        }
+
+        .no-trips p {
+            font-size: 19px;
+            color: #555;
+        }
+
+        @media (max-width: 900px) {
+            .trip-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            nav {
+                padding: 0 30px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            nav {
+                height: auto;
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav div {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .trip-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome h1 {
+                font-size: 38px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
+    <!-- NAVIGATION -->
+
     <nav>
-        <h2>TripSync</h2>
+
+        <h2>
+            <a href="{{ url_for('dashboard') }}">
+                TripSync ✈️
+            </a>
+        </h2>
 
         <div>
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('create_trip') }}">Create Trip</a>
-            <a href="#">My Trips</a>
-        </div>
-    </nav>
 
-    <main class="dashboard-container">
-
-        <h1>Welcome back, {{ user_name }}! 👋</h1>
-
-        <p>
-            Ready to plan your next adventure? 🌴✈️
-        </p>
-
-        <div class="dashboard-actions">
-
-            <a href="{{ url_for('create_trip') }}">
-                <button>Create a Trip ✈️</button>
+            <!-- THIS GOES TO THE PUBLIC HOME PAGE -->
+            <a href="{{ url_for('dashboard') }}">
+                 Home
             </a>
 
-            <button>Add Friends 👥</button>
+            <a href="{{ url_for('dashboard') }}">
+                Trips
+            </a>
+
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
+
+            <a href="{{ url_for('checklist') }}">
+                Checklist
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Log Out
+            </a>
 
         </div>
 
-        <section class="my-trips">
+    </nav>
 
-            <h2>My Trips 🌎</h2>
 
-            {% if trips %}
+    <!-- DASHBOARD -->
 
-                <div class="trip-cards">
+    <main class="container">
 
-                    {% for trip in trips %}
+        <section class="welcome">
 
-                        <div class="trip-card">
+            <h1>
+                Welcome, {{ user_name }}! 👋🏽
+            </h1>
 
-                            <h3>{{ trip["trip_name"] }}</h3>
-
-                            <p>📍 {{ trip["destination"] }}</p>
-
-                            <p>
-                                📅 {{ trip["start_date"] }}
-                                -
-                                {{ trip["end_date"] }}
-                            </p>
-
-                            <p>
-                                💰 Budget: ${{ trip["budget"] }}
-                            </p>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            {% else %}
-
-                <div class="no-trips">
-
-                    <h3>No trips yet! 🌴</h3>
-
-                    <p>
-                        Create your first trip and start planning
-                        with your friends.
-                    </p>
-
-                    <a href="{{ url_for('create_trip') }}">
-                        <button>Create Your First Trip ✨</button>
-                    </a>
-
-                </div>
-
-            {% endif %}
+            <p>
+                Plan your trips, organize your group,
+                and keep everything in one place.
+            </p>
 
         </section>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="actions">
+
+            <a
+                class="button"
+                href="{{ url_for('create_trip') }}"
+            >
+                ✈️ Create a Trip
+            </a>
+
+            <a
+                class="button"
+                href="{{ url_for('add_friends') }}"
+            >
+                👥 Add Friends
+            </a>
+
+            <a
+                class="button"
+                href="{{ url_for('itinerary') }}"
+            >
+                📅 Itinerary
+            </a>
+
+            <a
+                class="button"
+                href="{{ url_for('voting') }}"
+            >
+                🗳️ Voting
+            </a>
+
+        </div>
+
+
+        <!-- TRIPS -->
+
+        <h2 class="section-title">
+            My Trips
+        </h2>
+
+
+        {% if trips %}
+
+            <div class="trip-grid">
+
+                {% for trip in trips %}
+
+                    <div class="trip-card">
+
+                        <h2>
+                            {{ trip["trip_name"] }}
+                        </h2>
+
+                        <p>
+                            📍
+                            <strong>Destination:</strong>
+                            {{ trip["destination"] }}
+                        </p>
+
+                        <p>
+                            📅
+                            <strong>Dates:</strong>
+                            {{ trip["start_date"] }}
+                            –
+                            {{ trip["end_date"] }}
+                        </p>
+
+                        <p>
+                            💰
+                            <strong>Budget:</strong>
+                            ${{ "%.2f"|format(trip["budget"]) }}
+                        </p>
+
+                        <a
+                            href="{{ url_for(
+                                'trip_details',
+                                trip_id=trip['id']
+                            ) }}"
+                        >
+                            View Trip →
+                        </a>
+
+                        <br>
+
+                        <a
+                            href="{{ url_for(
+                                'add_friends'
+                            ) }}"
+                        >
+                            Add Friends →
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="no-trips">
+
+                <h2>
+                    No Trips Yet ✈️
+                </h2>
+
+                <p>
+                    Create your first trip and start
+                    planning with your group!
+                </p>
+
+                <a
+                    class="button"
+                    href="{{ url_for('create_trip') }}"
+                >
+                    Create My First Trip
+                </a>
+
+            </div>
+
+        {% endif %}
 
     </main>
 

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Itinerary | TripSync</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav>
+        <h2>TripSync</h2>
+
+        <div>
+            <a href="{{ url_for('dashboard') }}">My Trips</a>
+            <a href="{{ url_for('dashboard') }}">Home</a>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+
+        <h1>Shared Itinerary 📅</h1>
+
+        <p>
+            Plan activities and keep everyone on the same schedule.
+        </p>
+
+
+        <!-- Choose Trip -->
+
+        <form class="signup-form"
+              method="GET"
+              action="{{ url_for('itinerary') }}">
+
+            <label for="trip_id">Choose a Trip</label>
+
+            <select id="trip_id"
+                    name="trip_id"
+                    onchange="this.form.submit()"
+                    required>
+
+                <option value="">
+                    Select a trip
+                </option>
+
+                {% for trip in trips %}
+
+                    <option value="{{ trip['id'] }}"
+                        {% if selected_trip_id == trip['id'] %}
+                            selected
+                        {% endif %}>
+
+                        {{ trip['trip_name'] }} -
+                        {{ trip['destination'] }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </form>
+
+
+        {% if selected_trip_id %}
+
+        <!-- Add Activity -->
+
+        <section class="my-trips">
+
+            <h2>Add Activity ➕</h2>
+
+            <form class="signup-form"
+                  method="POST"
+                  action="{{ url_for('itinerary') }}">
+
+                <input type="hidden"
+                       name="trip_id"
+                       value="{{ selected_trip_id }}">
+
+
+                <label for="activity">
+                    Activity
+                </label>
+
+                <input
+                    type="text"
+                    id="activity"
+                    name="activity"
+                    placeholder="Example: Dinner at the beach"
+                    required
+                >
+
+
+                <label for="date">
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    required
+                >
+
+
+                <label for="time">
+                    Time
+                </label>
+
+                <input
+                    type="time"
+                    id="time"
+                    name="time"
+                    required
+                >
+
+
+                <label for="location">
+                    Location
+                </label>
+
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    placeholder="Example: Miami Beach"
+                    required
+                >
+
+
+                <button type="submit">
+                    Add to Itinerary 📅
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Activities -->
+
+        <section class="my-trips">
+
+            <h2>Trip Activities 🌴</h2>
+
+            {% if activities %}
+
+                <div class="trip-cards">
+
+                    {% for activity in activities %}
+
+                        <div class="trip-card">
+
+                            <h3>
+                                {{ activity['activity'] }}
+                            </h3>
+
+                            <p>
+                                📅 {{ activity['date'] }}
+                            </p>
+
+                            <p>
+                                🕐 {{ activity['display_time'] }}
+                            </p>
+
+                            <p>
+                                📍 {{ activity['location'] }}
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="no-trips">
+
+                    <h3>No activities yet! 📅</h3>
+
+                    <p>
+                        Add the first activity to your itinerary.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        {% endif %}
+
+
+        <p>
+            <a href="{{ url_for('dashboard') }}">
+                ← Back to My Trips
+            </a>
+        </p>
+
+    </main>
+
+</body>
+
+</html>

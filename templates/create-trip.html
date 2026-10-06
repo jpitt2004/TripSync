@@ -12,10 +12,14 @@
     <nav>
         <h2>TripSync</h2>
 
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="#">Trips</a>
-        <a href="#">Expenses</a>
-        <a href="#">Checklist</a>
+        <nav>
+    <h2>TripSync</h2>
+
+    <a href="{{ url_for('dashboard') }}">Home</a>
+    <a href="{{ url_for('dashboard') }}">Trips</a>
+    <a href="{{ url_for('expenses') }}">Expenses</a>
+    <a href="{{ url_for('checklist') }}">Checklist</a>
+</nav>
     </nav>
 
     <div class="create-trip-container">
