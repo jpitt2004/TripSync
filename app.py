@@ -558,14 +558,7 @@ def add_friends():
 
     connection = get_db_connection()
 
-    trips = connection.execute("""
-        SELECT *
-        FROM trips
-        WHERE user_id = ?
-        ORDER BY start_date
-    """, (
-        session["user_id"],
-    )).fetchall()
+    trips = get_accessible_trips(connection)
 
     if request.method == "POST":
 
@@ -578,15 +571,10 @@ def add_friends():
             ""
         ).strip().lower()
 
-        trip = connection.execute("""
-            SELECT *
-            FROM trips
-            WHERE id = ?
-            AND user_id = ?
-        """, (
-            trip_id,
-            session["user_id"]
-        )).fetchone()
+        trip = user_can_access_trip(
+    connection,
+    trip_id
+)
 
         if not trip:
 
