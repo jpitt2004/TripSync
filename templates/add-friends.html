@@ -72,13 +72,15 @@
         </form>
 
 
-        {% if message %}
-
-            <div class="success-message">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{ 'success-message' if category == 'success' else 'error-message' }}">
                 {{ message }}
             </div>
-
-        {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
 
 
         <p>
