@@ -1,64 +1,124 @@
 # TripSync
 
-TripSync is a group travel planning application that helps users organize trips, manage activities, track expenses, make group decisions, and keep track of trip tasks.
+TripSync is a collaborative group travel planning web application that helps users organize trips, manage itineraries, track expenses, make group decisions, and keep track of trip tasks in one place.
 
-## User-Facing Features
+## Live Application
 
-1. Create & Join Trips
-   - Users can create a trip and invite other people to join.
+**TripSync:** https://tripsync-gw90.onrender.com
 
-2. Shared Itinerary
-   - Group members can add activities, dates, times, and locations.
+## Project Overview
 
-3. Expense Tracker
-   - Users can enter trip expenses and keep track of who paid.
+TripSync was developed as a team software engineering project using Flask and SQLite. The application provides a centralized place for users and groups to plan and manage trips.
 
-4. Group Voting
-   - Members can vote on activities, restaurants, and other trip decisions.
+## Features
 
-5. Trip Checklist
-   - Members can create and complete packing items and trip tasks.
+### 1. Creating and Organizing a Trip
 
-## Personas
+**Persona:** Maya — Trip Organizer
 
-### Persona 1 — Trip Organizer
-**Name:** Maya  
-**Age:** 22  
-**Description:** A college student who usually organizes trips for her friends.  
-**Goal:** Keep everyone's trip information organized in one place.
+**Scenario:** Maya is planning a trip to Miami with four friends. The group is using different group chats to discuss the trip, making it difficult to keep track of the destination, dates, and plans. Maya needs one place to organize the trip and invite her friends. She creates a trip in TripSync, enters the trip name, destination, travel dates, and budget, and invites her friends.
 
-### Persona 2 — Group Member
-**Name:** Jordan  
-**Age:** 23  
-**Description:** A friend who participates in group trips but does not usually organize them.  
-**Goal:** Easily view plans, expenses, activities, and tasks.
+**User Story:** As a trip organizer, I want to create a trip with its destination and travel dates so that I can organize the trip information in one place.
 
-## User Stories
+**Feature:** Create & Join Trips
 
-1. As a user, I want to create a trip so that I can start planning with my group.
-2. As a user, I want to invite people to my trip so that everyone can participate.
-3. As a group member, I want to view the shared itinerary so that I know what the group has planned.
-4. As a group member, I want to add activities to the itinerary so that I can suggest things for the group to do.
-5. As a user, I want to add an expense so that the group can keep track of trip costs.
-6. As a group member, I want to see who paid for an expense so that we know who contributed.
-7. As a group member, I want to vote on activities or restaurants so that the group can make decisions together.
-8. As a user, I want to create checklist items so that important tasks are not forgotten.
-9. As a group member, I want to mark checklist items as completed so that everyone knows what has been handled.
-10. As a group member, I want to view trip information in one place so that I do not have to search through different apps.
+---
 
-## Scenarios
+### 2. Planning the Group Itinerary
 
-### Scenario 1 — Creating a Trip
-A user logs into TripSync and creates a new trip. They enter the trip name, destination, and travel dates. After creating the trip, they can invite friends to join.
+**Persona:** Jordan — Group Member
 
-### Scenario 2 — Planning the Itinerary
-A group member adds a dinner reservation to the shared itinerary by entering the restaurant, date, time, and location. The information is then available to the group.
+**Scenario:** Jordan and the group have several activities planned for their Miami trip. Their plans are being discussed through messages, making it easy to forget when or where activities are happening. Jordan needs a shared place where everyone can view the schedule. Jordan adds a dinner reservation to the TripSync itinerary with the restaurant, date, time, and location.
 
-### Scenario 3 — Tracking an Expense
-A group member pays for an activity and records the expense in TripSync. The expense tracker records the amount and who paid.
+**User Story:** As a group member, I want to add activities to the shared itinerary so that everyone can see the group's plans.
 
-### Scenario 4 — Voting on an Activity
-The group is deciding between two activities. A member creates a poll with the choices, and group members vote to help make the decision.
+**Feature:** Shared Trip Itinerary
 
-### Scenario 5 — Using the Trip Checklist
-Before the trip, group members create tasks such as packing, buying tickets, and confirming reservations. Members mark tasks as completed as they finish them.
+---
+
+### 3. Tracking Shared Expenses
+
+**Persona:** Alexis — Budget-Conscious Traveler
+
+**Scenario:** Alexis pays $200 for an activity that several group members participate in. Alexis wants the group to know how much was spent and who participated. Alexis records the expense in TripSync and enters the amount and participating group members so the group can keep track of its shared spending.
+
+**User Story:** As a group member, I want to record a shared expense so that the group can keep track of its spending.
+
+**Feature:** Trip Expense Tracker
+
+---
+
+### 4. Deciding on a Group Activity
+
+**Persona:** Jordan — Group Member
+
+**Scenario:** The group cannot decide whether to visit a museum or go on a boat tour. Everyone has a different preference, and discussing the options through group messages is becoming confusing. Jordan creates a vote in TripSync with the two activity options. Each group member submits a choice, and the group can view the results to help make the decision.
+
+**User Story:** As a group member, I want to create a vote with different activity options so that the group can make decisions together.
+
+**Feature:** Group Voting
+
+---
+
+### 5. Preparing for the Trip
+
+**Persona:** Maya — Trip Organizer
+
+**Scenario:** As the trip gets closer, Maya realizes that the group needs to complete tasks such as packing, buying tickets, and confirming reservations. She is worried that some tasks may be forgotten. Maya creates checklist items in TripSync and shares them with the group. Members mark items as completed so everyone can see what has been handled.
+
+**User Story:** As a group member, I want to create checklist items so that important trip tasks are not forgotten.
+
+**Feature:** Trip Checklist
+
+---
+
+## User Authentication
+
+TripSync provides user authentication so users can create an account, log in, log out, and access their saved trips through their dashboard.
+
+## Technologies Used
+
+- Python
+- Flask
+- SQLite
+- HTML
+- CSS
+- Git
+- GitHub
+- Render
+- Docker
+
+## Project Structure
+
+```text
+TripSync/
+│
+├── app.py
+├── database.db
+├── README.md
+├── TESTING.md
+├── requirements.txt
+├── Dockerfile
+├── .dockerignore
+│
+├── static/
+│   └── style.css
+│
+├── templates/
+│   ├── index.html
+│   ├── login.html
+│   ├── signup.html
+│   ├── dashboard.html
+│   ├── create-trip.html
+│   ├── add-friends.html
+│   ├── itinerary.html
+│   ├── expenses.html
+│   ├── voting.html
+│   ├── checklist.html
+│   └── trip.html
+│
+└── tests/
+    ├── README.md
+    ├── test_auth.py
+    ├── test_trip_features.py
+    └── test_trip_planning.py
