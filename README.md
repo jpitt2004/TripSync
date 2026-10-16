@@ -72,6 +72,18 @@ TripSync was developed as a team software engineering project using Flask and SQ
 
 ---
 
+### 6. Deleting a Trip
+
+**Persona:** Maya — Trip Organizer
+
+**Scenario:** Maya decides that a planned trip is no longer needed. Since she created the trip, she wants to remove it from TripSync along with the information associated with the trip. Maya selects the delete option and confirms the deletion. The trip and its related information are removed from the application for the group.
+
+**User Story:** As a trip organizer, I want to delete a trip I created so that I can remove trips that are no longer needed.
+
+**Feature:** Delete Trip
+
+---
+
 ## User Authentication
 
 TripSync provides user authentication so users can create an account, log in, log out, and access their saved trips through their dashboard.
@@ -83,6 +95,7 @@ TripSync provides user authentication so users can create an account, log in, lo
 - SQLite
 - HTML
 - CSS
+- JavaScript
 - Git
 - GitHub
 - Render
