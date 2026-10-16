@@ -9,200 +9,508 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* =========================
+           ITINERARY PAGE
+           ========================= */
+
+        .itinerary-page {
+            min-height: calc(100vh - 85px);
+            padding: 35px 20px 50px;
+            box-sizing: border-box;
+        }
+
+        .itinerary-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .itinerary-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .itinerary-header h1 {
+            margin: 0 0 8px;
+            font-size: 42px;
+            color: #7c4dff;
+        }
+
+        .itinerary-header p {
+            margin: 0;
+            color: #666;
+            font-size: 18px;
+        }
+
+        .itinerary-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(124, 77, 255, 0.12);
+        }
+
+        .itinerary-card h2 {
+            margin: 0 0 20px;
+            color: #7c4dff;
+            font-size: 27px;
+            text-align: center;
+        }
+
+        .itinerary-form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .itinerary-form label {
+            font-weight: bold;
+            color: #444;
+            margin: 10px 0 7px;
+        }
+
+        .itinerary-form input,
+        .itinerary-form select {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #eee8ff;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+            background: white;
+        }
+
+        .itinerary-form input:focus,
+        .itinerary-form select:focus {
+            border-color: #7c4dff;
+        }
+
+        .itinerary-form button {
+            align-self: center;
+            margin-top: 22px;
+            padding: 14px 28px;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            border-top: 5px solid #7c4dff;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+        }
+
+        .activity-card h3 {
+            margin: 0 0 15px;
+            color: #7c4dff;
+            font-size: 21px;
+        }
+
+        .activity-card p {
+            margin: 9px 0;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .no-activities {
+            text-align: center;
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .no-activities h3 {
+            color: #7c4dff;
+            margin-top: 0;
+        }
+
+        .no-activities p {
+            color: #666;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            color: #7c4dff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #ff5c9a;
+        }
+
+        /* Navigation */
+
+        nav {
+            position: relative;
+            min-height: 85px;
+            padding: 15px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-sizing: border-box;
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 28px;
+            white-space: nowrap;
+        }
+
+        nav h2 a {
+            color: #7c4dff;
+            text-decoration: none;
+        }
+
+        nav div {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav div a {
+            color: #444;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav div a:hover {
+            color: #ff5c9a;
+        }
+
+        @media (max-width: 700px) {
+
+            nav {
+                height: auto;
+                padding: 18px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav div {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .itinerary-page {
+                padding: 25px 15px 40px;
+            }
+
+            .itinerary-header h1 {
+                font-size: 34px;
+            }
+
+            .itinerary-card {
+                padding: 25px 20px;
+            }
+
+            .activity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
 
+    <!-- NAVIGATION -->
+
     <nav>
-        <h2>TripSync</h2>
+
+        <h2>
+            <a href="{{ url_for('dashboard') }}">
+                TripSync ✈️
+            </a>
+        </h2>
 
         <div>
-            <a href="{{ url_for('dashboard') }}">My Trips</a>
-            <a href="{{ url_for('dashboard') }}">Home</a>
+
+            <a href="{{ url_for('dashboard') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('dashboard') }}">
+                Trips
+            </a>
+
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
+
+            <a href="{{ url_for('checklist') }}">
+                Checklist
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Log Out
+            </a>
+
         </div>
+
     </nav>
 
-    <main class="dashboard-container">
 
-        <h1>Shared Itinerary 📅</h1>
+    <!-- ITINERARY -->
 
-        <p>
-            Plan activities and keep everyone on the same schedule.
-        </p>
+    <main class="itinerary-page">
 
+        <div class="itinerary-container">
 
-        <!-- Choose Trip -->
+            <section class="itinerary-header">
 
-        <form class="signup-form"
-              method="GET"
-              action="{{ url_for('itinerary') }}">
+                <h1>
+                    Shared Itinerary 📅
+                </h1>
 
-            <label for="trip_id">Choose a Trip</label>
+                <p>
+                    Plan activities and keep everyone on the same schedule.
+                </p>
 
-            <select id="trip_id"
-                    name="trip_id"
-                    onchange="this.form.submit()"
-                    required>
-
-                <option value="">
-                    Select a trip
-                </option>
-
-                {% for trip in trips %}
-
-                    <option value="{{ trip['id'] }}"
-                        {% if selected_trip_id == trip['id'] %}
-                            selected
-                        {% endif %}>
-
-                        {{ trip['trip_name'] }} -
-                        {{ trip['destination'] }}
-
-                    </option>
-
-                {% endfor %}
-
-            </select>
-
-        </form>
+            </section>
 
 
-        {% if selected_trip_id %}
+            <!-- CHOOSE TRIP -->
 
-        <!-- Add Activity -->
+            <section class="itinerary-card">
 
-        <section class="my-trips">
+                <h2>
+                    Choose a Trip ✈️
+                </h2>
 
-            <h2>Add Activity ➕</h2>
-
-            <form class="signup-form"
-                  method="POST"
-                  action="{{ url_for('itinerary') }}">
-
-                <input type="hidden"
-                       name="trip_id"
-                       value="{{ selected_trip_id }}">
-
-
-                <label for="activity">
-                    Activity
-                </label>
-
-                <input
-                    type="text"
-                    id="activity"
-                    name="activity"
-                    placeholder="Example: Dinner at the beach"
-                    required
+                <form
+                    class="itinerary-form"
+                    method="GET"
+                    action="{{ url_for('itinerary') }}"
                 >
 
+                    <label for="trip_id">
+                        Select a Trip
+                    </label>
 
-                <label for="date">
-                    Date
-                </label>
+                    <select
+                        id="trip_id"
+                        name="trip_id"
+                        onchange="this.form.submit()"
+                        required
+                    >
 
-                <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    required
+                        <option value="">
+                            Select a trip
+                        </option>
+
+                        {% for trip in trips %}
+
+                            <option
+                                value="{{ trip['id'] }}"
+                                {% if selected_trip_id == trip['id'] %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ trip['trip_name'] }} • {{ trip['destination'] }} •
+    {% set months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] %}
+    {% set start = trip['start_date'] %}
+    {% set end = trip['end_date'] %}
+    {% if start and end and start|length == 10 and end|length == 10 %}
+        {% set start_month = months[(start[5:7]|int) - 1] %}
+        {% set end_month = months[(end[5:7]|int) - 1] %}
+        {% if start[0:7] == end[0:7] %}
+            {{ start_month }} {{ start[8:10]|int }}–{{ end[8:10]|int }}, {{ end[0:4] }}
+        {% elif start[0:4] == end[0:4] %}
+            {{ start_month }} {{ start[8:10]|int }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% else %}
+            {{ start_month }} {{ start[8:10]|int }}, {{ start[0:4] }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% endif %}
+    {% else %}
+        Dates not set
+    {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </form>
+
+            </section>
+
+
+            {% if selected_trip_id %}
+
+
+            <!-- ADD ACTIVITY -->
+
+            <section class="itinerary-card">
+
+                <h2>
+                    Add Activity ➕
+                </h2>
+
+                <form
+                    class="itinerary-form"
+                    method="POST"
+                    action="{{ url_for('itinerary') }}"
                 >
 
-
-                <label for="time">
-                    Time
-                </label>
-
-                <input
-                    type="time"
-                    id="time"
-                    name="time"
-                    required
-                >
+                    <input
+                        type="hidden"
+                        name="trip_id"
+                        value="{{ selected_trip_id }}"
+                    >
 
 
-                <label for="location">
-                    Location
-                </label>
+                    <label for="activity">
+                        Activity
+                    </label>
 
-                <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    placeholder="Example: Miami Beach"
-                    required
-                >
-
-
-                <button type="submit">
-                    Add to Itinerary 📅
-                </button>
-
-            </form>
-
-        </section>
+                    <input
+                        type="text"
+                        id="activity"
+                        name="activity"
+                        placeholder="Example: Dinner at the beach"
+                        required
+                    >
 
 
-        <!-- Activities -->
+                    <label for="date">
+                        Date
+                    </label>
 
-        <section class="my-trips">
+                    <input
+                        type="date"
+                        id="date"
+                        name="date"
+                        required
+                    >
 
-            <h2>Trip Activities 🌴</h2>
 
-            {% if activities %}
+                    <label for="time">
+                        Time
+                    </label>
 
-                <div class="trip-cards">
+                    <input
+                        type="time"
+                        id="time"
+                        name="time"
+                        required
+                    >
 
-                    {% for activity in activities %}
 
-                        <div class="trip-card">
+                    <label for="location">
+                        Location
+                    </label>
 
-                            <h3>
-                                {{ activity['activity'] }}
-                            </h3>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        placeholder="Example: Miami Beach"
+                        required
+                    >
 
-                            <p>
-                                📅 {{ activity['date'] }}
-                            </p>
 
-                            <p>
-                                🕐 {{ activity['display_time'] }}
-                            </p>
+                    <button type="submit">
+                        Add to Itinerary 📅
+                    </button>
 
-                            <p>
-                                📍 {{ activity['location'] }}
-                            </p>
+                </form>
 
-                        </div>
+            </section>
 
-                    {% endfor %}
 
-                </div>
+            <!-- TRIP ACTIVITIES -->
 
-            {% else %}
+            <section class="itinerary-card">
 
-                <div class="no-trips">
+                <h2>
+                    Trip Activities 🌴
+                </h2>
 
-                    <h3>No activities yet! 📅</h3>
+                {% if activities %}
 
-                    <p>
-                        Add the first activity to your itinerary.
-                    </p>
+                    <div class="activity-grid">
 
-                </div>
+                        {% for activity in activities %}
+
+                            <div class="activity-card">
+
+                                <h3>
+                                    {{ activity['activity'] }}
+                                </h3>
+
+                                <p>
+                                    📅
+                                    <strong>Date:</strong>
+                                    {{ activity['date'][5:7] }}/{{ activity['date'][8:10] }}/{{ activity['date'][0:4] }}
+                                </p>
+
+                                <p>
+                                    🕐
+                                    <strong>Time:</strong>
+                                    {{ activity['display_time'] }}
+                                </p>
+
+                                <p>
+                                    📍
+                                    <strong>Location:</strong>
+                                    {{ activity['location'] }}
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="no-activities">
+
+                        <h3>
+                            No Activities Yet! 📅
+                        </h3>
+
+                        <p>
+                            Add the first activity to your itinerary.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
 
             {% endif %}
 
-        </section>
 
-        {% endif %}
+            <!-- BACK LINK -->
 
+            <div class="back-link">
 
-        <p>
-            <a href="{{ url_for('dashboard') }}">
-                ← Back to My Trips
-            </a>
-        </p>
+                <a href="{{ url_for('dashboard') }}">
+                    ← Back to My Trips
+                </a>
+
+            </div>
+
+        </div>
 
     </main>
 

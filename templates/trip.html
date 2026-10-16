@@ -17,205 +17,523 @@
         href="{{ url_for('static', filename='style.css') }}"
     >
 
+    <style>
+
+        /* =========================
+           TRIP DETAILS PAGE
+           ========================= */
+
+        .trip-details-page {
+            min-height: calc(100vh - 85px);
+            padding: 35px 20px 50px;
+            box-sizing: border-box;
+        }
+
+        .trip-details-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .trip-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .trip-header h1 {
+            margin: 0 0 12px;
+            font-size: 45px;
+            color: #7c4dff;
+        }
+
+        .trip-header h1::after {
+            content: "";
+        }
+
+        .trip-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            color: #555;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        /* =========================
+           TRIP TOOLS
+           ========================= */
+
+        .trip-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(124, 77, 255, 0.12);
+        }
+
+        .trip-section h2 {
+            text-align: center;
+            margin: 0 0 25px;
+            color: #7c4dff;
+            font-size: 28px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 18px;
+            padding: 23px;
+            border-top: 5px solid #7c4dff;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tool-card h3 {
+            margin: 0 0 10px;
+            color: #7c4dff;
+            font-size: 21px;
+        }
+
+        .tool-card p {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .tool-card a {
+            text-decoration: none;
+        }
+
+        .tool-card button {
+            margin: 0;
+            padding: 11px 22px;
+        }
+
+        /* =========================
+           MEMBERS
+           ========================= */
+
+        .member-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 5px solid #ff5c9a;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+
+        .member-card h3 {
+            margin: 0 0 8px;
+            color: #7c4dff;
+        }
+
+        .member-card p {
+            margin: 0;
+            color: #666;
+            word-break: break-word;
+        }
+
+        .no-members {
+            text-align: center;
+            color: #666;
+        }
+
+        /* =========================
+           BACK LINK
+           ========================= */
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            color: #7c4dff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #ff5c9a;
+        }
+
+        /* =========================
+           NAVIGATION
+           ========================= */
+
+        nav {
+            position: relative;
+            min-height: 85px;
+            padding: 15px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-sizing: border-box;
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 28px;
+            white-space: nowrap;
+        }
+
+        nav h2 a {
+            color: #7c4dff;
+            text-decoration: none;
+        }
+
+        nav div {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav div a {
+            color: #444;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav div a:hover {
+            color: #ff5c9a;
+        }
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 700px) {
+
+            nav {
+                height: auto;
+                padding: 18px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav div {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .trip-details-page {
+                padding: 25px 15px 40px;
+            }
+
+            .trip-header h1 {
+                font-size: 35px;
+            }
+
+            .trip-section {
+                padding: 25px 20px;
+            }
+
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .member-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-<nav>
+    <!-- NAVIGATION -->
 
-    <h2>TripSync ✈️</h2>
+    <nav>
 
-    <div>
+        <h2>
+            <a href="{{ url_for('dashboard') }}">
+                TripSync
+            </a>
+        </h2>
 
-        <a href="{{ url_for('dashboard') }}">
-            My Trips
-        </a>
+        <div>
 
-        <a href="{{ url_for('dashboard') }}">Home</a>
-            Home
-        </a>
+            <a href="{{ url_for('dashboard') }}">
+                Home
+            </a>
 
-        <a href="{{ url_for('logout') }}">
-            Log Out
-        </a>
+            <a href="{{ url_for('dashboard') }}">
+                Trips
+            </a>
 
-    </div>
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
 
-</nav>
+            <a href="{{ url_for('checklist') }}">
+                Checklist
+            </a>
 
-
-<main class="dashboard-container">
-
-    <h1>
-        {{ trip['trip_name'] }} 🌴
-    </h1>
-
-    <p>
-        📍 {{ trip['destination'] }}
-    </p>
-
-    <p>
-        📅 {{ trip['start_date'] }}
-        -
-        {{ trip['end_date'] }}
-    </p>
-
-    <p>
-        💰 Budget:
-        ${{ "%.2f"|format(trip['budget']) }}
-    </p>
-
-
-    <!-- Feature Buttons -->
-
-    <section class="my-trips">
-
-        <h2>Trip Tools</h2>
-
-        <div class="trip-cards">
-
-            <div class="trip-card">
-
-                <h3>📅 Itinerary</h3>
-
-                <p>
-                    View and add trip activities.
-                </p>
-
-                <a href="{{ url_for(
-                    'itinerary',
-                    trip_id=trip['id']
-                ) }}">
-
-                    <button type="button">
-                        Open Itinerary
-                    </button>
-
-                </a>
-
-            </div>
-
-
-            <div class="trip-card">
-
-                <h3>💰 Expenses</h3>
-
-                <p>
-                    Track the group's spending.
-                </p>
-
-                <a href="{{ url_for(
-                    'expenses',
-                    trip_id=trip['id']
-                ) }}">
-
-                    <button type="button">
-                        Open Expenses
-                    </button>
-
-                </a>
-
-            </div>
-
-
-            <div class="trip-card">
-
-                <h3>🗳️ Voting</h3>
-
-                <p>
-                    Let the group vote on decisions.
-                </p>
-
-                <a href="{{ url_for(
-                    'voting',
-                    trip_id=trip['id']
-                ) }}">
-
-                    <button type="button">
-                        Open Voting
-                    </button>
-
-                </a>
-
-            </div>
-
-
-            <div class="trip-card">
-
-                <h3>✅ Checklist</h3>
-
-                <p>
-                    Keep track of trip tasks.
-                </p>
-
-                <a href="{{ url_for(
-                    'checklist',
-                    trip_id=trip['id']
-                ) }}">
-
-                    <button type="button">
-                        Open Checklist
-                    </button>
-
-                </a>
-
-            </div>
+            <a href="{{ url_for('logout') }}">
+                Log Out
+            </a>
 
         </div>
 
-    </section>
+    </nav>
 
 
-    <!-- Members -->
+    <!-- TRIP DETAILS -->
 
-    <section class="my-trips">
+    <main class="trip-details-page">
 
-        <h2>
-            Trip Members 👥
-        </h2>
+        <div class="trip-details-container">
 
-        {% if members %}
 
-            <div class="trip-cards">
+            <!-- TRIP HEADER -->
 
-                {% for member in members %}
+            <section class="trip-header">
 
-                    <div class="trip-card">
+                <h1>
+                    {{ trip['trip_name'] }} 🌴
+                </h1>
+
+                <div class="trip-info">
+
+                    <div class="info-item">
+                        📍 <strong>Destination:</strong>
+                        {{ trip['destination'] }}
+                    </div>
+
+                    <div class="info-item">
+                        📅 <strong>Dates:</strong>
+                        {{ trip['start_date'][5:7] }}/{{ trip['start_date'][8:10] }}/{{ trip['start_date'][0:4] }}
+–
+{{ trip['end_date'][5:7] }}/{{ trip['end_date'][8:10] }}/{{ trip['end_date'][0:4] }}
+                    </div>
+
+                    <div class="info-item">
+                        💰 <strong>Budget:</strong>
+                        ${{ "%.2f"|format(trip['budget']) }}
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- TRIP TOOLS -->
+
+            <section class="trip-section">
+
+                <h2>
+                    Trip Tools
+                </h2>
+
+                <div class="tool-grid">
+
+
+                    <!-- ITINERARY -->
+
+                    <div class="tool-card">
 
                         <h3>
-                            {{ member['name'] }}
+                            📅 Itinerary
                         </h3>
 
                         <p>
-                            {{ member['email'] }}
+                            View and add trip activities.
+                        </p>
+
+                        <a href="{{ url_for(
+                            'itinerary',
+                            trip_id=trip['id']
+                        ) }}">
+
+                            <button type="button">
+                                Open Itinerary
+                            </button>
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- EXPENSES -->
+
+                    <div class="tool-card">
+
+                        <h3>
+                            💰 Expenses
+                        </h3>
+
+                        <p>
+                            Track the group's spending.
+                        </p>
+
+                        <a href="{{ url_for(
+                            'expenses',
+                            trip_id=trip['id']
+                        ) }}">
+
+                            <button type="button">
+                                Open Expenses
+                            </button>
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- VOTING -->
+
+                    <div class="tool-card">
+
+                        <h3>
+                            🗳️ Voting
+                        </h3>
+
+                        <p>
+                            Let the group vote on decisions.
+                        </p>
+
+                        <a href="{{ url_for(
+                            'voting',
+                            trip_id=trip['id']
+                        ) }}">
+
+                            <button type="button">
+                                Open Voting
+                            </button>
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- CHECKLIST -->
+
+                    <div class="tool-card">
+
+                        <h3>
+                            ✅ Checklist
+                        </h3>
+
+                        <p>
+                            Keep track of trip tasks.
+                        </p>
+
+                        <a href="{{ url_for(
+                            'checklist',
+                            trip_id=trip['id']
+                        ) }}">
+
+                            <button type="button">
+                                Open Checklist
+                            </button>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- MEMBERS -->
+
+            <section class="trip-section">
+
+                <h2>
+                    Trip Members 👥
+                </h2>
+
+                {% if members %}
+
+                    <div class="member-grid">
+
+                        {% for member in members %}
+
+                            <div class="member-card">
+
+                                <h3>
+                                    {{ member['name'] }}
+                                </h3>
+
+                                <p>
+                                    {{ member['email'] }}
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="no-members">
+
+                        <p>
+                            No other members have been added yet.
                         </p>
 
                     </div>
 
-                {% endfor %}
+                {% endif %}
 
-            </div>
-
-        {% else %}
-
-            <p>
-                No other members have been added yet.
-            </p>
-
-        {% endif %}
-
-    </section>
+            </section>
 
 
-    <p>
+            <!-- BACK LINK -->
 
-        <a href="{{ url_for('dashboard') }}">
-            ← Back to My Trips
-        </a>
+            <div class="trip-actions">
 
-    </p>
+    <a href="{{ url_for('dashboard') }}" class="back-link">
+        ← Back to My Trips
+    </a>
 
-</main>
+    <form
+        method="POST"
+        action="{{ url_for('delete_trip', trip_id=trip['id']) }}"
+        onsubmit="return confirm('Are you sure you want to delete this trip? This cannot be undone.');"
+    >
+
+        <button type="submit" class="delete-button">
+            🗑️ Delete Trip
+        </button>
+
+    </form>
+
+</div>
+
+        </div>
+
+    </main>
 
 </body>
 

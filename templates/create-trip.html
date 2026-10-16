@@ -1,56 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Create a Trip | TripSync</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        /* =========================
+           CREATE TRIP NAVIGATION
+           ========================= */
+
+        nav {
+            position: relative;
+            height: 85px;
+            padding: 0 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-sizing: border-box;
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 28px;
+            white-space: nowrap;
+        }
+
+        nav h2 a {
+            color: #7c4dff;
+            text-decoration: none;
+        }
+
+        nav div {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav div a {
+            color: #444;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav div a:hover {
+            color: #ff5c9a;
+        }
+
+
+        /* =========================
+           CREATE TRIP PAGE
+           ========================= */
+
+        .create-trip-page {
+            min-height: calc(100vh - 85px);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 35px 20px 50px;
+            box-sizing: border-box;
+        }
+
+        .create-trip-card {
+            width: 100%;
+            max-width: 550px;
+            padding: 35px 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(124, 77, 255, 0.15);
+            box-sizing: border-box;
+        }
+
+        .create-trip-card h1 {
+            margin: 0 0 8px;
+            font-size: 40px;
+            color: #7c4dff;
+        }
+
+        .create-trip-card h1::after {
+            content: "";
+        }
+
+        .create-trip-subtitle {
+            margin: 0 0 25px;
+            color: #666;
+            font-size: 17px;
+        }
+
+        .trip-form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .trip-form label {
+            font-weight: bold;
+            margin: 10px 0 6px;
+            color: #444;
+        }
+
+        .trip-form input {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #eee8ff;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .trip-form input:focus {
+            border-color: #7c4dff;
+        }
+
+        .trip-form button {
+            align-self: center;
+            margin: 25px 0 0;
+            padding: 14px 30px;
+        }
+
+        .success-message {
+            margin: 0 0 20px;
+            padding: 12px 15px;
+            background: #f1eaff;
+            border-radius: 10px;
+            color: #7c4dff;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 700px) {
+
+            nav {
+                height: auto;
+                padding: 18px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav div {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .create-trip-page {
+                padding: 30px 15px 40px;
+            }
+
+            .create-trip-card {
+                padding: 30px 25px;
+            }
+
+            .create-trip-card h1 {
+                font-size: 34px;
+            }
+        }
+
+    </style>
+
 </head>
 
 <body>
 
+    <!-- NAVIGATION -->
+
     <nav>
-        <h2>TripSync</h2>
 
-        <nav>
-    <h2>TripSync</h2>
+        <h2>
+            <a href="{{ url_for('dashboard') }}">
+                TripSync
+            </a>
+        </h2>
 
-    <a href="{{ url_for('dashboard') }}">Home</a>
-    <a href="{{ url_for('dashboard') }}">Trips</a>
-    <a href="{{ url_for('expenses') }}">Expenses</a>
-    <a href="{{ url_for('checklist') }}">Checklist</a>
-</nav>
+        <div>
+
+            <a href="{{ url_for('dashboard') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('dashboard') }}">
+                Trips
+            </a>
+
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
+
+            <a href="{{ url_for('checklist') }}">
+                Checklist
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Log Out
+            </a>
+
+        </div>
+
     </nav>
 
-    <div class="create-trip-container">
 
-        <h1>Create Your Trip</h1>
-        <p>Start planning something unforgettable with your crew! 🌴</p>
-{% if message %}
-    <p class="success-message">🎉 {{ message }}</p>
-{% endif %}
-        <form class="trip-form" method="POST" action="{{ url_for('create_trip') }}">
+    <!-- CREATE TRIP -->
 
-            <label for="trip-name">Trip Name</label>
-            <input type="text" id="trip-name" name="trip_name" placeholder="Ex: Miami Girls Trip">
+    <main class="create-trip-page">
 
-            <label for="destination">Destination</label>
-            <input type="text" id="destination" name="destination" placeholder="Ex: Miami, Florida">
+        <div class="create-trip-card">
 
-            <label for="start-date">Start Date</label>
-            <input type="date" id="start-date" name="start_date">
+            <h1>Create Your Trip</h1>
 
-            <label for="end-date">End Date</label>
-            <input type="date" id="end-date" name="end_date">
+            <p class="create-trip-subtitle">
+                Start planning something unforgettable with your crew! 🌴
+            </p>
 
-            <label for="budget">Trip Budget</label>
-            <input type="number" id="budget" name="budget" placeholder="Ex: 1500">
+            {% if message %}
 
-            <button type="submit">Create Trip ✈️</button>
+                <p class="success-message">
+                    🎉 {{ message }}
+                </p>
 
-        </form>
+            {% endif %}
 
-    </div>
+
+            <form
+                class="trip-form"
+                method="POST"
+                action="{{ url_for('create_trip') }}"
+            >
+
+                <label for="trip-name">
+                    Trip Name
+                </label>
+
+                <input
+                    type="text"
+                    id="trip-name"
+                    name="trip_name"
+                    placeholder="Ex: Miami Girls Trip"
+                >
+
+
+                <label for="destination">
+                    Destination
+                </label>
+
+                <input
+                    type="text"
+                    id="destination"
+                    name="destination"
+                    placeholder="Ex: Miami, Florida"
+                >
+
+
+                <label for="start-date">
+                    Start Date
+                </label>
+
+                <input
+                    type="date"
+                    id="start-date"
+                    name="start_date"
+                >
+
+
+                <label for="end-date">
+                    End Date
+                </label>
+
+                <input
+                    type="date"
+                    id="end-date"
+                    name="end_date"
+                >
+
+
+                <label for="budget">
+                    Trip Budget
+                </label>
+
+                <input
+                    type="number"
+                    id="budget"
+                    name="budget"
+                    placeholder="Ex: 1500"
+                >
+
+
+                <button type="submit">
+                    Create Trip ✈️
+                </button>
+
+            </form>
+
+        </div>
+
+    </main>
 
 </body>
+
 </html>

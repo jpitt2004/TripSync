@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
     <meta charset="UTF-8">
@@ -16,235 +17,543 @@
         href="{{ url_for('static', filename='style.css') }}"
     >
 
+    <style>
+
+        /* =========================
+           CHECKLIST PAGE
+           ========================= */
+
+        .checklist-page {
+            min-height: calc(100vh - 85px);
+            padding: 35px 20px 50px;
+            box-sizing: border-box;
+        }
+
+        .checklist-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .checklist-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .checklist-header h1 {
+            margin: 0 0 8px;
+            font-size: 42px;
+            color: #7c4dff;
+        }
+
+        .checklist-header p {
+            margin: 0;
+            color: #666;
+            font-size: 18px;
+        }
+
+        .checklist-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(124, 77, 255, 0.12);
+        }
+
+        .checklist-card h2 {
+            margin: 0 0 20px;
+            color: #7c4dff;
+            font-size: 27px;
+            text-align: center;
+        }
+
+        /* Forms */
+
+        .checklist-form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .checklist-form label {
+            font-weight: bold;
+            color: #444;
+            margin: 10px 0 7px;
+        }
+
+        .checklist-form input,
+        .checklist-form select {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #eee8ff;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+            background: white;
+        }
+
+        .checklist-form input:focus,
+        .checklist-form select:focus {
+            border-color: #7c4dff;
+        }
+
+        .checklist-form button {
+            align-self: center;
+            margin-top: 22px;
+            padding: 14px 28px;
+        }
+
+        /* Checklist Items */
+
+        .checklist-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            border-radius: 16px;
+            padding: 18px 20px;
+            border-left: 5px solid #7c4dff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .checklist-toggle {
+            flex-shrink: 0;
+        }
+
+        .checklist-toggle button {
+            margin: 0;
+            padding: 5px;
+            background: none;
+            box-shadow: none;
+            font-size: 25px;
+            color: #7c4dff;
+        }
+
+        .checklist-toggle button:hover {
+            transform: scale(1.08);
+            box-shadow: none;
+        }
+
+        .checklist-item-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .checklist-item-content h3 {
+            margin: 0 0 5px;
+            color: #444;
+            font-size: 19px;
+        }
+
+        .checklist-item-content p {
+            margin: 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .completed h3 {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .completed {
+            border-left-color: #ff5c9a;
+        }
+
+        /* Empty State */
+
+        .no-items {
+            text-align: center;
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .no-items h3 {
+            color: #7c4dff;
+            margin-top: 0;
+        }
+
+        .no-items p {
+            color: #666;
+        }
+
+        /* Back Link */
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            color: #7c4dff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #ff5c9a;
+        }
+
+        /* =========================
+           NAVIGATION
+           ========================= */
+
+        nav {
+            position: relative;
+            min-height: 85px;
+            padding: 15px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-sizing: border-box;
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 28px;
+            white-space: nowrap;
+        }
+
+        nav h2 a {
+            color: #7c4dff;
+            text-decoration: none;
+        }
+
+        nav div {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav div a {
+            color: #444;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav div a:hover {
+            color: #ff5c9a;
+        }
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 700px) {
+
+            nav {
+                height: auto;
+                padding: 18px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav div {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .checklist-page {
+                padding: 25px 15px 40px;
+            }
+
+            .checklist-header h1 {
+                font-size: 34px;
+            }
+
+            .checklist-card {
+                padding: 25px 20px;
+            }
+
+            .checklist-item {
+                padding: 15px;
+            }
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-<nav>
+    <!-- NAVIGATION -->
 
-    <h2>TripSync ✈️</h2>
+    <nav>
 
-    <div>
+        <h2>
+            <a href="{{ url_for('dashboard') }}">
+                TripSync ✈️
+            </a>
+        </h2>
 
-        <a href="{{ url_for('dashboard') }}">
-            My Trips
-        </a>
+        <div>
 
-        <a href="{{ url_for('dashboard') }}">Home</a>
-            Home
-        </a>
+            <a href="{{ url_for('dashboard') }}">
+                Home
+            </a>
 
-        <a href="{{ url_for('logout') }}">
-            Log Out
-        </a>
+            <a href="{{ url_for('dashboard') }}">
+                Trips
+            </a>
 
-    </div>
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
 
-</nav>
+            <a href="{{ url_for('checklist') }}">
+                Checklist
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Log Out
+            </a>
+
+        </div>
+
+    </nav>
 
 
-<main class="dashboard-container">
+    <!-- CHECKLIST -->
 
-    <h1>Trip Checklist ✅</h1>
+    <main class="checklist-page">
 
-    <p>
-        Keep track of things that need to be packed or completed.
-    </p>
+        <div class="checklist-container">
+
+            <section class="checklist-header">
+
+                <h1>
+                    Trip Checklist ✅
+                </h1>
+
+                <p>
+                    Keep track of things that need to be packed or completed.
+                </p>
+
+            </section>
 
 
-    <!-- Choose Trip -->
+            <!-- CHOOSE TRIP -->
 
-    <form
-        class="signup-form"
-        method="GET"
-        action="{{ url_for('checklist') }}"
-    >
+            <section class="checklist-card">
 
-        <label for="trip_id">
-            Choose a Trip
-        </label>
+                <h2>
+                    Choose a Trip ✈️
+                </h2>
 
-        <select
-            id="trip_id"
-            name="trip_id"
-            onchange="this.form.submit()"
-            required
-        >
-
-            <option value="">
-                Select a trip
-            </option>
-
-            {% for trip in trips %}
-
-                <option
-                    value="{{ trip['id'] }}"
-                    {% if selected_trip_id == trip['id'] %}
-                        selected
-                    {% endif %}
+                <form
+                    class="checklist-form"
+                    method="GET"
+                    action="{{ url_for('checklist') }}"
                 >
 
-                    {{ trip['trip_name'] }}
+                    <label for="trip_id">
+                        Select a Trip
+                    </label>
 
-                </option>
+                    <select
+                        id="trip_id"
+                        name="trip_id"
+                        onchange="this.form.submit()"
+                        required
+                    >
 
-            {% endfor %}
+                        <option value="">
+                            Select a trip
+                        </option>
 
-        </select>
+                        {% for trip in trips %}
 
-    </form>
-
-
-    {% if selected_trip_id %}
-
-
-    <!-- Add Checklist Item -->
-
-    <section class="my-trips">
-
-        <h2>Add Checklist Item ➕</h2>
-
-        <form
-            class="signup-form"
-            method="POST"
-            action="{{ url_for('checklist') }}"
-        >
-
-            <input
-                type="hidden"
-                name="trip_id"
-                value="{{ selected_trip_id }}"
-            >
-
-            <label for="item">
-                Item
-            </label>
-
-            <input
-                type="text"
-                id="item"
-                name="item"
-                placeholder="Example: Pack sunscreen"
-                required
-            >
-
-            <button type="submit">
-                Add Item ✅
-            </button>
-
-        </form>
-
-    </section>
-
-
-    <!-- Checklist -->
-
-    <section class="my-trips">
-
-        <h2>Trip Checklist</h2>
-
-        {% if items %}
-
-            <div class="trip-cards">
-
-                {% for item in items %}
-
-                    <div class="trip-card">
-
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'toggle_checklist',
-                                item_id=item['id']
-                            ) }}"
-                        >
-
-                            <button
-                                type="submit"
-                                style="
-                                    font-size:22px;
-                                    border:none;
-                                    background:none;
-                                    cursor:pointer;
-                                "
-                            >
-
-                                {% if item['completed'] %}
-                                    ☑️
-                                {% else %}
-                                    ⬜
+                            <option
+                                value="{{ trip['id'] }}"
+                                {% if selected_trip_id == trip['id'] %}
+                                    selected
                                 {% endif %}
+                            >
+                                {{ trip['trip_name'] }} • {{ trip['destination'] }} •
+    {% set months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] %}
+    {% set start = trip['start_date'] %}
+    {% set end = trip['end_date'] %}
+    {% if start and end and start|length == 10 and end|length == 10 %}
+        {% set start_month = months[(start[5:7]|int) - 1] %}
+        {% set end_month = months[(end[5:7]|int) - 1] %}
+        {% if start[0:7] == end[0:7] %}
+            {{ start_month }} {{ start[8:10]|int }}–{{ end[8:10]|int }}, {{ end[0:4] }}
+        {% elif start[0:4] == end[0:4] %}
+            {{ start_month }} {{ start[8:10]|int }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% else %}
+            {{ start_month }} {{ start[8:10]|int }}, {{ start[0:4] }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% endif %}
+    {% else %}
+        Dates not set
+    {% endif %}
 
-                            </button>
+                            </option>
 
-                        </form>
+                        {% endfor %}
+
+                    </select>
+
+                </form>
+
+            </section>
 
 
-                        <div>
+            {% if selected_trip_id %}
 
-                            {% if item['completed'] %}
 
-                                <h3
-                                    style="
-                                        text-decoration:line-through;
-                                        color:#777;
-                                    "
-                                >
-                                    {{ item['item'] }}
-                                </h3>
+            <!-- ADD CHECKLIST ITEM -->
 
-                                <p>
-                                    Completed ✓
-                                </p>
+            <section class="checklist-card">
 
-                            {% else %}
+                <h2>
+                    Add Checklist Item ➕
+                </h2>
 
-                                <h3>
-                                    {{ item['item'] }}
-                                </h3>
+                <form
+                    class="checklist-form"
+                    method="POST"
+                    action="{{ url_for('checklist') }}"
+                >
 
-                                <p>
-                                    Not completed
-                                </p>
+                    <input
+                        type="hidden"
+                        name="trip_id"
+                        value="{{ selected_trip_id }}"
+                    >
 
-                            {% endif %}
+                    <label for="item">
+                        Item
+                    </label>
 
-                        </div>
+                    <input
+                        type="text"
+                        id="item"
+                        name="item"
+                        placeholder="Example: Pack sunscreen"
+                        required
+                    >
+
+                    <button type="submit">
+                        Add Item ✅
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- CHECKLIST -->
+
+            <section class="checklist-card">
+
+                <h2>
+                    Trip Checklist
+                </h2>
+
+                {% if items %}
+
+                    <div class="checklist-items">
+
+                        {% for item in items %}
+
+                            <div class="checklist-item {% if item['completed'] %}completed{% endif %}">
+
+                                <div class="checklist-toggle">
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'toggle_checklist',
+                                            item_id=item['id']
+                                        ) }}"
+                                    >
+
+                                        <button type="submit">
+
+                                            {% if item['completed'] %}
+                                                ☑️
+                                            {% else %}
+                                                ⬜
+                                            {% endif %}
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+
+                                <div class="checklist-item-content">
+
+                                    <h3>
+                                        {{ item['item'] }}
+                                    </h3>
+
+                                    <p>
+
+                                        {% if item['completed'] %}
+                                            Completed ✓
+                                        {% else %}
+                                            Not completed
+                                        {% endif %}
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
 
                     </div>
 
-                {% endfor %}
+                {% else %}
+
+                    <div class="no-items">
+
+                        <h3>
+                            No Checklist Items Yet! ✅
+                        </h3>
+
+                        <p>
+                            Add something that needs to be completed.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- BACK LINK -->
+
+            <div class="back-link">
+
+                <a href="{{ url_for('dashboard') }}">
+                    ← Back to My Trips
+                </a>
 
             </div>
 
-        {% else %}
+        </div>
 
-            <div class="no-trips">
-
-                <h3>No checklist items yet! ✅</h3>
-
-                <p>
-                    Add something that needs to be completed.
-                </p>
-
-            </div>
-
-        {% endif %}
-
-    </section>
-
-    {% endif %}
-
-
-    <p>
-
-        <a href="{{ url_for('dashboard') }}">
-            ← Back to My Trips
-        </a>
-
-    </p>
-
-</main>
+    </main>
 
 </body>
+
 </html>

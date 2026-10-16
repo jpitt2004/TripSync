@@ -1546,7 +1546,141 @@ def trip_details(trip_id):
         trip=trip,
         members=all_members
     )
+# ============================================================
+# DELETE TRIP
+# ============================================================
 
+@app.route(
+    "/delete-trip/<int:trip_id>",
+    methods=["POST"]
+)
+def delete_trip(trip_id):
+
+    if not logged_in():
+
+        return redirect(
+            url_for("login")
+        )
+
+    connection = get_db_connection()
+
+    # Make sure the logged-in user owns this trip
+    trip = connection.execute("""
+        SELECT *
+        FROM trips
+        WHERE id = ?
+        AND user_id = ?
+    """, (
+        trip_id,
+        session["user_id"]
+    )).fetchone()
+
+    if not trip:
+
+        connection.close()
+
+        flash(
+            "You can only delete trips that you created.",
+            "error"
+        )
+
+        return redirect(
+            url_for("dashboard")
+        )
+
+    # Delete checklist items
+    connection.execute("""
+        DELETE FROM checklist
+        WHERE trip_id = ?
+    """, (
+        trip_id,
+    ))
+
+    # Delete expenses
+    connection.execute("""
+        DELETE FROM expenses
+        WHERE trip_id = ?
+    """, (
+        trip_id,
+    ))
+
+    # Delete itinerary activities
+    connection.execute("""
+        DELETE FROM itinerary
+        WHERE trip_id = ?
+    """, (
+        trip_id,
+    ))
+
+    # Delete poll votes
+    connection.execute("""
+        DELETE FROM poll_votes
+        WHERE poll_id IN (
+            SELECT id
+            FROM polls
+            WHERE trip_id = ?
+        )
+    """, (
+        trip_id,
+    ))
+
+    # Delete poll options
+    connection.execute("""
+        DELETE FROM poll_options
+        WHERE poll_id IN (
+            SELECT id
+            FROM polls
+            WHERE trip_id = ?
+        )
+    """, (
+        trip_id,
+    ))
+
+    # Delete polls
+    connection.execute("""
+        DELETE FROM polls
+        WHERE trip_id = ?
+    """, (
+        trip_id,
+    ))
+
+    # Delete pending invitations
+    connection.execute("""
+        DELETE FROM pending_invitations
+        WHERE trip_id = ?
+    """, (
+        trip_id,
+    ))
+
+    # Delete trip members
+    connection.execute("""
+        DELETE FROM trip_members
+        WHERE trip_id = ?
+    """, (
+        trip_id,
+    ))
+
+    # Finally delete the trip itself
+    connection.execute("""
+        DELETE FROM trips
+        WHERE id = ?
+        AND user_id = ?
+    """, (
+        trip_id,
+        session["user_id"]
+    ))
+
+    connection.commit()
+    connection.close()
+
+    flash(
+        "Trip deleted successfully.",
+        "success"
+    )
+
+    return redirect(
+        url_for("dashboard")
+    )
 
 # ============================================================
 # START DATABASE

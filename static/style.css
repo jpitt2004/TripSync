@@ -57,8 +57,8 @@ nav a:hover {
 
 h1 {
     font-size: 55px;
-    margin-top: 140px;
-    margin-bottom: 10px;
+    margin-top: 65px;
+    margin-bottom: 5px;
     color: #7c4dff;
 }
 
@@ -74,9 +74,9 @@ body > p {
 
 .description {
     max-width: 600px;
-    margin: 20px auto;
+    margin: 8px auto;
     padding: 0 20px;
-    line-height: 1.6;
+    line-height: 1.5;
     color: #666;
     font-size: 18px;
 }
@@ -86,7 +86,8 @@ body > p {
    ========================= */
 
 .buttons {
-    margin-top: 30px;
+    margin-top: 12px;
+    margin-bottom: 0;
 }
 
 button {
@@ -113,15 +114,16 @@ button:hover {
    ========================= */
 
 .features {
-    margin-top: 5px;
-    padding: 30px 20px;
+    margin-top: 0;
+    padding: 5px 20px 30px;
     text-align: center;
 }
 
 .features h2 {
     font-size: 32px;
     color: #444;
-    margin-bottom: 35px;
+    margin-top: 5px;
+    margin-bottom: 20px;
 }
 
 .feature-cards {
@@ -209,7 +211,7 @@ footer p {
 
     h1 {
         font-size: 42px;
-        margin-top: 170px;
+        margin-top: 110px;
     }
 
     .feature-cards {
@@ -227,7 +229,7 @@ footer p {
 
 .create-trip-container {
     max-width: 550px;
-    margin: 120px auto 50px;
+    margin: 110px auto 50px;
     padding: 35px;
     background-color: white;
     border-radius: 25px;
@@ -277,4 +279,165 @@ footer p {
 .trip-form button {
     margin-top: 25px;
     align-self: center;
+}
+/* =========================
+   LOGIN / SIGNUP PAGES
+   ========================= */
+
+.auth-container {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 100px 20px 50px;
+    box-sizing: border-box;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 500px;
+    padding: 35px 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+    box-shadow: 0 8px 25px rgba(124, 77, 255, 0.15);
+    box-sizing: border-box;
+}
+
+.auth-card h1 {
+    margin: 0 0 10px;
+    font-size: 42px;
+    color: #7c4dff;
+}
+
+.auth-card h1::after {
+    content: "";
+}
+
+.auth-subtitle {
+    margin: 0 0 25px;
+    color: #666;
+    font-size: 17px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #444;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 13px;
+    border: 2px solid #eee8ff;
+    border-radius: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #7c4dff;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    padding-right: 55px;
+}
+
+.show-password {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 18px;
+    font-size: 15px;
+}
+
+.show-password:hover {
+    transform: translateY(-50%);
+}
+
+.auth-button {
+    width: fit-content;
+    align-self: center;
+    margin: 8px 0 0;
+    padding: 14px 30px;
+}
+
+.auth-footer {
+    margin: 25px 0 0;
+    color: #666;
+}
+
+.auth-footer a {
+    color: #7c4dff;
+    font-weight: bold;
+}
+
+.auth-footer a:hover {
+    color: #ff5c9a;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+
+    .auth-container {
+        padding: 90px 15px 40px;
+    }
+
+    .auth-card {
+        padding: 30px 25px;
+    }
+
+    .auth-card h1 {
+        font-size: 34px;
+    }
+}
+/* =========================
+   DELETE TRIP BUTTON
+   ========================= */
+
+.delete-button {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+}
+
+.delete-button:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+.error-message {
+    margin: 0 auto 20px;
+    padding: 12px 15px;
+    background: #ffe5e5;
+    border-radius: 10px;
+    color: #c0392b;
+    font-weight: bold;
+    text-align: center;
 }

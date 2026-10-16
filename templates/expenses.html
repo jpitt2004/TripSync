@@ -1,193 +1,531 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Expenses | TripSync</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* =========================
+           EXPENSES PAGE
+           ========================= */
+
+        .expenses-page {
+            min-height: calc(100vh - 85px);
+            padding: 35px 20px 50px;
+            box-sizing: border-box;
+        }
+
+        .expenses-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .expenses-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .expenses-header h1 {
+            margin: 0 0 8px;
+            font-size: 42px;
+            color: #7c4dff;
+        }
+
+        .expenses-header p {
+            margin: 0;
+            color: #666;
+            font-size: 18px;
+        }
+
+        .expenses-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(124, 77, 255, 0.12);
+        }
+
+        .expenses-card h2 {
+            margin: 0 0 20px;
+            color: #7c4dff;
+            font-size: 27px;
+            text-align: center;
+        }
+
+        .expense-form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .expense-form label {
+            font-weight: bold;
+            color: #444;
+            margin: 10px 0 7px;
+        }
+
+        .expense-form input,
+        .expense-form select {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #eee8ff;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+            background: white;
+        }
+
+        .expense-form input:focus,
+        .expense-form select:focus {
+            border-color: #7c4dff;
+        }
+
+        .expense-form button {
+            align-self: center;
+            margin-top: 22px;
+            padding: 14px 28px;
+        }
+
+        /* Total */
+
+        .total-card {
+            text-align: center;
+            background: linear-gradient(
+                135deg,
+                #f1eaff,
+                #ffe8f3
+            );
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .total-card h3 {
+            margin: 0;
+            color: #7c4dff;
+            font-size: 36px;
+        }
+
+        /* Expense Cards */
+
+        .expense-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .expense-item {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            border-top: 5px solid #ff5c9a;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+        }
+
+        .expense-item h3 {
+            margin: 0 0 15px;
+            color: #7c4dff;
+            font-size: 21px;
+        }
+
+        .expense-item p {
+            margin: 9px 0;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .no-expenses {
+            text-align: center;
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .no-expenses h3 {
+            color: #7c4dff;
+            margin-top: 0;
+        }
+
+        .no-expenses p {
+            color: #666;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            color: #7c4dff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #ff5c9a;
+        }
+
+        /* Navigation */
+
+        nav {
+            position: relative;
+            min-height: 85px;
+            padding: 15px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-sizing: border-box;
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 28px;
+            white-space: nowrap;
+        }
+
+        nav h2 a {
+            color: #7c4dff;
+            text-decoration: none;
+        }
+
+        nav div {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav div a {
+            color: #444;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav div a:hover {
+            color: #ff5c9a;
+        }
+
+        @media (max-width: 700px) {
+
+            nav {
+                height: auto;
+                padding: 18px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav div {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .expenses-page {
+                padding: 25px 15px 40px;
+            }
+
+            .expenses-header h1 {
+                font-size: 34px;
+            }
+
+            .expenses-card {
+                padding: 25px 20px;
+            }
+
+            .expense-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
 
-<nav>
-    <h2>TripSync ✈️</h2>
+    <!-- NAVIGATION -->
 
-    <div>
-        <a href="{{ url_for('dashboard') }}">My Trips</a>
-        <a href="{{ url_for('dashboard') }}">Home</a>
-        <a href="{{ url_for('logout') }}">Log Out</a>
-    </div>
-</nav>
+    <nav>
 
-<main class="dashboard-container">
+        <h2>
+            <a href="{{ url_for('dashboard') }}">
+                TripSync ✈️
+            </a>
+        </h2>
 
-    <h1>Expense Tracker 💰</h1>
+        <div>
 
-    <p>
-        Keep track of what your group spends during the trip.
-    </p>
+            <a href="{{ url_for('dashboard') }}">
+                Home
+            </a>
 
-    <!-- Choose Trip -->
+            <a href="{{ url_for('dashboard') }}">
+                Trips
+            </a>
 
-    <form class="signup-form"
-          method="GET"
-          action="{{ url_for('expenses') }}">
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
 
-        <label for="trip_id">Choose a Trip</label>
+            <a href="{{ url_for('checklist') }}">
+                Checklist
+            </a>
 
-        <select name="trip_id"
-                id="trip_id"
-                onchange="this.form.submit()"
-                required>
-
-            <option value="">Select a trip</option>
-
-            {% for trip in trips %}
-
-                <option value="{{ trip['id'] }}"
-                    {% if selected_trip_id == trip['id'] %}
-                        selected
-                    {% endif %}>
-
-                    {{ trip['trip_name'] }} -
-                    {{ trip['destination'] }}
-
-                </option>
-
-            {% endfor %}
-
-        </select>
-
-    </form>
-
-
-    {% if selected_trip_id %}
-
-    <!-- Add Expense -->
-
-    <section class="my-trips">
-
-        <h2>Add Expense ➕</h2>
-
-        <form class="signup-form"
-              method="POST"
-              action="{{ url_for('expenses') }}">
-
-            <input type="hidden"
-                   name="trip_id"
-                   value="{{ selected_trip_id }}">
-
-            <label for="description">
-                Description
-            </label>
-
-            <input
-                type="text"
-                id="description"
-                name="description"
-                placeholder="Example: Dinner"
-                required
-            >
-
-            <label for="amount">
-                Amount
-            </label>
-
-            <input
-                type="number"
-                id="amount"
-                name="amount"
-                min="0"
-                step="0.01"
-                placeholder="45.00"
-                required
-            >
-
-            <button type="submit">
-                Add Expense 💰
-            </button>
-
-        </form>
-
-    </section>
-
-
-    <!-- Total -->
-
-    <section class="my-trips">
-
-        <h2>Total Trip Expenses</h2>
-
-        <div class="trip-card">
-
-            <h3>
-                ${{ "%.2f"|format(total) }}
-            </h3>
+            <a href="{{ url_for('logout') }}">
+                Log Out
+            </a>
 
         </div>
 
-    </section>
+    </nav>
 
 
-    <!-- Expense List -->
+    <!-- EXPENSES -->
 
-    <section class="my-trips">
+    <main class="expenses-page">
 
-        <h2>Expenses</h2>
+        <div class="expenses-container">
 
-        {% if expenses %}
+            <section class="expenses-header">
 
-            <div class="trip-cards">
+                <h1>
+                    Expense Tracker 💰
+                </h1>
 
-                {% for expense in expenses %}
+                <p>
+                    Keep track of what your group spends during the trip.
+                </p>
 
-                    <div class="trip-card">
+            </section>
+
+
+            <!-- CHOOSE TRIP -->
+
+            <section class="expenses-card">
+
+                <h2>
+                    Choose a Trip ✈️
+                </h2>
+
+                <form
+                    class="expense-form"
+                    method="GET"
+                    action="{{ url_for('expenses') }}"
+                >
+
+                    <label for="trip_id">
+                        Select a Trip
+                    </label>
+
+                    <select
+                        name="trip_id"
+                        id="trip_id"
+                        onchange="this.form.submit()"
+                        required
+                    >
+
+                        <option value="">
+                            Select a trip
+                        </option>
+
+                        {% for trip in trips %}
+
+                            <option
+                                value="{{ trip['id'] }}"
+                                {% if selected_trip_id == trip['id'] %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ trip['trip_name'] }} • {{ trip['destination'] }} •
+    {% set months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] %}
+    {% set start = trip['start_date'] %}
+    {% set end = trip['end_date'] %}
+    {% if start and end and start|length == 10 and end|length == 10 %}
+        {% set start_month = months[(start[5:7]|int) - 1] %}
+        {% set end_month = months[(end[5:7]|int) - 1] %}
+        {% if start[0:7] == end[0:7] %}
+            {{ start_month }} {{ start[8:10]|int }}–{{ end[8:10]|int }}, {{ end[0:4] }}
+        {% elif start[0:4] == end[0:4] %}
+            {{ start_month }} {{ start[8:10]|int }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% else %}
+            {{ start_month }} {{ start[8:10]|int }}, {{ start[0:4] }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% endif %}
+    {% else %}
+        Dates not set
+    {% endif %}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </form>
+
+            </section>
+
+
+            {% if selected_trip_id %}
+
+
+            <!-- ADD EXPENSE -->
+
+            <section class="expenses-card">
+
+                <h2>
+                    Add Expense ➕
+                </h2>
+
+                <form
+                    class="expense-form"
+                    method="POST"
+                    action="{{ url_for('expenses') }}"
+                >
+
+                    <input
+                        type="hidden"
+                        name="trip_id"
+                        value="{{ selected_trip_id }}"
+                    >
+
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <input
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="Example: Dinner"
+                        required
+                    >
+
+
+                    <label for="amount">
+                        Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        min="0"
+                        step="0.01"
+                        placeholder="45.00"
+                        required
+                    >
+
+
+                    <button type="submit">
+                        Add Expense 💰
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- TOTAL -->
+
+            <section class="expenses-card">
+
+                <h2>
+                    Total Trip Expenses
+                </h2>
+
+                <div class="total-card">
+
+                    <h3>
+                        ${{ "%.2f"|format(total) }}
+                    </h3>
+
+                </div>
+
+            </section>
+
+
+            <!-- EXPENSE LIST -->
+
+            <section class="expenses-card">
+
+                <h2>
+                    Expenses
+                </h2>
+
+                {% if expenses %}
+
+                    <div class="expense-grid">
+
+                        {% for expense in expenses %}
+
+                            <div class="expense-item">
+
+                                <h3>
+                                    {{ expense['description'] }}
+                                </h3>
+
+                                <p>
+                                    💵
+                                    <strong>Amount:</strong>
+                                    ${{ "%.2f"|format(expense['amount']) }}
+                                </p>
+
+                                <p>
+                                    👤
+                                    <strong>Paid by:</strong>
+                                    {{ expense['payer'] }}
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="no-expenses">
 
                         <h3>
-                            {{ expense['description'] }}
+                            No Expenses Yet! 💰
                         </h3>
 
                         <p>
-                            💵 ${{ "%.2f"|format(expense['amount']) }}
-                        </p>
-
-                        <p>
-                            👤 Paid by {{ expense['payer'] }}
+                            Add the first expense for this trip.
                         </p>
 
                     </div>
 
-                {% endfor %}
+                {% endif %}
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- BACK LINK -->
+
+            <div class="back-link">
+
+                <a href="{{ url_for('dashboard') }}">
+                    ← Back to My Trips
+                </a>
 
             </div>
 
-        {% else %}
+        </div>
 
-            <div class="no-trips">
-
-                <h3>No expenses yet! 💰</h3>
-
-                <p>
-                    Add the first expense for this trip.
-                </p>
-
-            </div>
-
-        {% endif %}
-
-    </section>
-
-    {% endif %}
-
-    <p>
-        <a href="{{ url_for('dashboard') }}">
-            ← Back to My Trips
-        </a>
-    </p>
-
-</main>
+    </main>
 
 </body>
+
 </html>

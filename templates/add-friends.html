@@ -9,85 +9,324 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        /* =========================
+           ADD FRIENDS PAGE
+           ========================= */
+
+        .add-friends-page {
+            min-height: calc(100vh - 85px);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 45px 20px 50px;
+            box-sizing: border-box;
+        }
+
+        .add-friends-card {
+            width: 100%;
+            max-width: 550px;
+            padding: 35px 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(124, 77, 255, 0.15);
+            box-sizing: border-box;
+        }
+
+        .add-friends-card h1 {
+            margin: 0 0 8px;
+            font-size: 40px;
+            color: #7c4dff;
+        }
+
+        .add-friends-card h1::after {
+            content: "";
+        }
+
+        .add-friends-subtitle {
+            margin: 0 0 25px;
+            color: #666;
+            font-size: 17px;
+        }
+
+        .friends-form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .friends-form label {
+            font-weight: bold;
+            margin: 12px 0 7px;
+            color: #444;
+        }
+
+        .friends-form input,
+        .friends-form select {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #eee8ff;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .friends-form input:focus,
+        .friends-form select:focus {
+            border-color: #7c4dff;
+        }
+
+        .friends-form button {
+            align-self: center;
+            margin: 25px 0 0;
+            padding: 14px 30px;
+        }
+
+        .success-message,
+        .error-message {
+            margin: 20px 0 0;
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .success-message {
+            background: #f1eaff;
+            color: #7c4dff;
+        }
+
+        .error-message {
+            background: #ffe8ee;
+            color: #d64570;
+        }
+
+        .back-link {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .back-link a {
+            color: #7c4dff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #ff5c9a;
+        }
+
+        @media (max-width: 700px) {
+
+            .add-friends-page {
+                padding: 30px 15px 40px;
+            }
+
+            .add-friends-card {
+                padding: 30px 25px;
+            }
+
+            .add-friends-card h1 {
+                font-size: 34px;
+            }
+        }
+/* ADD FRIENDS NAVIGATION */
+
+nav {
+    position: relative;
+    min-height: 85px;
+    padding: 15px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+nav h2 {
+    margin: 0;
+    white-space: nowrap;
+}
+
+nav div {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+nav div a {
+    font-size: 16px;
+    text-decoration: none;
+}
+
+@media (max-width: 700px) {
+    nav {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav div {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+}
+    </style>
+
 </head>
 
 <body>
 
+    <!-- NAVIGATION -->
+
     <nav>
-        <h2>TripSync</h2>
+
+        <h2>
+            <a href="{{ url_for('dashboard') }}">
+                TripSync
+            </a>
+        </h2>
 
         <div>
-            <a href="{{ url_for('dashboard') }}">My Trips</a>
-            <a href="{{ url_for('dashboard') }}">Home</a>
+
+            <a href="{{ url_for('dashboard') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('dashboard') }}">
+                Trips
+            </a>
+
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
+
+            <a href="{{ url_for('checklist') }}">
+                Checklist
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Log Out
+            </a>
+
         </div>
+
     </nav>
 
-    <main class="dashboard-container">
 
-        <h1>Add Friends 👥</h1>
+    <!-- ADD FRIENDS -->
 
-        <p>
-            Invite your friends to join your trip!
-        </p>
+    <main class="add-friends-page">
 
-        <form class="signup-form"
-              method="POST"
-              action="{{ url_for('add_friends') }}">
+        <div class="add-friends-card">
 
-            <label for="trip_id">Choose a Trip</label>
+            <h1>
+                Add Friends 👥
+            </h1>
 
-            <select id="trip_id" name="trip_id" required>
-
-                <option value="">
-                    Select a trip
-                </option>
-
-                {% for trip in trips %}
-
-                    <option value="{{ trip['id'] }}">
-                        {{ trip['trip_name'] }} -
-                        {{ trip['destination'] }}
-                    </option>
-
-                {% endfor %}
-
-            </select>
+            <p class="add-friends-subtitle">
+                Invite your friends to join your trip!
+            </p>
 
 
-            <label for="email">Friend's Email</label>
-
-            <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="friend@example.com"
-                required
+            <form
+                class="friends-form"
+                method="POST"
+                action="{{ url_for('add_friends') }}"
             >
 
+                <label for="trip_id">
+                    Choose a Trip
+                </label>
 
-            <button type="submit">
-                Add Friend ✈️
-            </button>
+                <select
+                    id="trip_id"
+                    name="trip_id"
+                    required
+                >
 
-        </form>
+                    <option value="">
+                        Select a trip
+                    </option>
 
+                    {% for trip in trips %}
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="{{ 'success-message' if category == 'success' else 'error-message' }}">
-                {{ message }}
-            </div>
-        {% endfor %}
+                        <option value="{{ trip['id'] }}">
+                            {{ trip['trip_name'] }} • {{ trip['destination'] }} •
+    {% set months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] %}
+    {% set start = trip['start_date'] %}
+    {% set end = trip['end_date'] %}
+    {% if start and end and start|length == 10 and end|length == 10 %}
+        {% set start_month = months[(start[5:7]|int) - 1] %}
+        {% set end_month = months[(end[5:7]|int) - 1] %}
+        {% if start[0:7] == end[0:7] %}
+            {{ start_month }} {{ start[8:10]|int }}–{{ end[8:10]|int }}, {{ end[0:4] }}
+        {% elif start[0:4] == end[0:4] %}
+            {{ start_month }} {{ start[8:10]|int }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% else %}
+            {{ start_month }} {{ start[8:10]|int }}, {{ start[0:4] }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% endif %}
+    {% else %}
+        Dates not set
     {% endif %}
-    {% endwith %}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
 
 
-        <p>
-            <a href="{{ url_for('dashboard') }}">
-                ← Back to My Trips
-            </a>
-        </p>
+                <label for="email">
+                    Friend's Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="friend@example.com"
+                    required
+                >
+
+
+                <button type="submit">
+                    Add Friend ✈️
+                </button>
+
+            </form>
+
+
+            <!-- FLASH MESSAGES -->
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    {% for category, message in messages %}
+
+                        <div class="{{ 'success-message' if category == 'success' else 'error-message' }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <div class="back-link">
+
+                <a href="{{ url_for('dashboard') }}">
+                    ← Back to My Trips
+                </a>
+
+            </div>
+
+        </div>
 
     </main>
 

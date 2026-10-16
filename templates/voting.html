@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,234 +9,548 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        /* =========================
+           VOTING PAGE
+           ========================= */
+
+        .voting-page {
+            min-height: calc(100vh - 85px);
+            padding: 35px 20px 50px;
+            box-sizing: border-box;
+        }
+
+        .voting-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .voting-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .voting-header h1 {
+            margin: 0 0 8px;
+            font-size: 42px;
+            color: #7c4dff;
+        }
+
+        .voting-header p {
+            margin: 0;
+            color: #666;
+            font-size: 18px;
+        }
+
+        .voting-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(124, 77, 255, 0.12);
+        }
+
+        .voting-card h2 {
+            margin: 0 0 20px;
+            color: #7c4dff;
+            font-size: 27px;
+            text-align: center;
+        }
+
+        .voting-form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .voting-form label {
+            font-weight: bold;
+            color: #444;
+            margin: 10px 0 7px;
+        }
+
+        .voting-form input,
+        .voting-form select {
+            width: 100%;
+            padding: 13px;
+            border: 2px solid #eee8ff;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+            background: white;
+        }
+
+        .voting-form input:focus,
+        .voting-form select:focus {
+            border-color: #7c4dff;
+        }
+
+        .voting-form button {
+            align-self: center;
+            margin-top: 22px;
+            padding: 14px 28px;
+        }
+
+        /* Poll */
+
+        .poll-card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 20px;
+            border-top: 5px solid #7c4dff;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+        }
+
+        .poll-card h3 {
+            margin: 0 0 18px;
+            color: #7c4dff;
+            font-size: 21px;
+        }
+
+        .poll-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin: 12px 0;
+            padding: 12px 15px;
+            background: #f7f3ff;
+            border-radius: 10px;
+        }
+
+        .poll-option span {
+            color: #444;
+            font-size: 16px;
+        }
+
+        .poll-option strong {
+            color: #7c4dff;
+        }
+
+        .vote-button {
+            margin: 0;
+            padding: 9px 18px;
+            font-size: 14px;
+        }
+
+        .no-polls {
+            text-align: center;
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .no-polls h3 {
+            color: #7c4dff;
+            margin-top: 0;
+        }
+
+        .no-polls p {
+            color: #666;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            color: #7c4dff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #ff5c9a;
+        }
+
+        /* =========================
+           NAVIGATION
+           ========================= */
+
+        nav {
+            position: relative;
+            min-height: 85px;
+            padding: 15px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            box-sizing: border-box;
+        }
+
+        nav h2 {
+            margin: 0;
+            font-size: 28px;
+            white-space: nowrap;
+        }
+
+        nav h2 a {
+            color: #7c4dff;
+            text-decoration: none;
+        }
+
+        nav div {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav div a {
+            color: #444;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav div a:hover {
+            color: #ff5c9a;
+        }
+
+        @media (max-width: 700px) {
+
+            nav {
+                height: auto;
+                padding: 18px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav div {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .voting-page {
+                padding: 25px 15px 40px;
+            }
+
+            .voting-header h1 {
+                font-size: 34px;
+            }
+
+            .voting-card {
+                padding: 25px 20px;
+            }
+
+            .poll-option {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .vote-button {
+                align-self: center;
+            }
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-<nav>
+    <!-- NAVIGATION -->
 
-    <h2>TripSync ✈️</h2>
+    <nav>
 
-    <div>
-        <a href="{{ url_for('dashboard') }}">My Trips</a>
-        <a href="{{ url_for('dashboard') }}">Home</a>
-        <a href="{{ url_for('logout') }}">Log Out</a>
-    </div>
+        <h2>
+            <a href="{{ url_for('dashboard') }}">
+                TripSync ✈️
+            </a>
+        </h2>
 
-</nav>
+        <div>
+
+            <a href="{{ url_for('dashboard') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('dashboard') }}">
+                Trips
+            </a>
+
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
+
+            <a href="{{ url_for('checklist') }}">
+                Checklist
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                Log Out
+            </a>
+
+        </div>
+
+    </nav>
 
 
-<main class="dashboard-container">
+    <!-- VOTING -->
 
-    <h1>Group Voting 🗳️</h1>
+    <main class="voting-page">
 
-    <p>
-        Let everyone help decide what the group should do.
-    </p>
+        <div class="voting-container">
+
+            <section class="voting-header">
+
+                <h1>
+                    Group Voting 🗳️
+                </h1>
+
+                <p>
+                    Let everyone help decide what the group should do.
+                </p>
+
+            </section>
 
 
-    <!-- Choose Trip -->
+            <!-- CHOOSE TRIP -->
 
-    <form class="signup-form"
-          method="GET"
-          action="{{ url_for('voting') }}">
+            <section class="voting-card">
 
-        <label for="trip_id">
-            Choose a Trip
-        </label>
+                <h2>
+                    Choose a Trip ✈️
+                </h2>
 
-        <select
-            id="trip_id"
-            name="trip_id"
-            onchange="this.form.submit()"
-            required
-        >
-
-            <option value="">
-                Select a trip
-            </option>
-
-            {% for trip in trips %}
-
-                <option
-                    value="{{ trip['id'] }}"
-                    {% if selected_trip_id == trip['id'] %}
-                        selected
-                    {% endif %}
+                <form
+                    class="voting-form"
+                    method="GET"
+                    action="{{ url_for('voting') }}"
                 >
 
-                    {{ trip['trip_name'] }}
+                    <label for="trip_id">
+                        Select a Trip
+                    </label>
 
-                </option>
+                    <select
+                        id="trip_id"
+                        name="trip_id"
+                        onchange="this.form.submit()"
+                        required
+                    >
 
-            {% endfor %}
+                        <option value="">
+                            Select a trip
+                        </option>
 
-        </select>
+                        {% for trip in trips %}
 
-    </form>
-
-
-    {% if selected_trip_id %}
-
-    <!-- Create Vote -->
-
-    <section class="my-trips">
-
-        <h2>Create a Vote ➕</h2>
-
-        <form
-            class="signup-form"
-            method="POST"
-            action="{{ url_for('voting') }}"
-        >
-
-            <input
-                type="hidden"
-                name="trip_id"
-                value="{{ selected_trip_id }}"
-            >
-
-            <label>
-                Question
-            </label>
-
-            <input
-                type="text"
-                name="question"
-                placeholder="Where should we eat?"
-                required
-            >
-
-
-            <label>
-                Option 1
-            </label>
-
-            <input
-                type="text"
-                name="option1"
-                placeholder="Italian"
-                required
-            >
-
-
-            <label>
-                Option 2
-            </label>
-
-            <input
-                type="text"
-                name="option2"
-                placeholder="Sushi"
-                required
-            >
-
-
-            <label>
-                Option 3
-            </label>
-
-            <input
-                type="text"
-                name="option3"
-                placeholder="Mexican"
-            >
-
-
-            <button type="submit">
-                Create Vote 🗳️
-            </button>
-
-        </form>
-
-    </section>
-
-
-    <!-- Existing Polls -->
-
-    <section class="my-trips">
-
-        <h2>Current Votes</h2>
-
-        {% if polls %}
-
-            {% for item in polls %}
-
-                <div class="trip-card">
-
-                    <h3>
-                        {{ item["poll"]["question"] }}
-                    </h3>
-
-                    {% for option in item["options"] %}
-
-                        <div style="
-                            display:flex;
-                            justify-content:space-between;
-                            align-items:center;
-                            margin:12px 0;
-                            padding:10px;
-                            background:#f5f5f5;
-                            border-radius:10px;
-                        ">
-
-                            <span>
-                                {{ option["option_text"] }}
-
-                                <strong>
-                                    ({{ option["votes"] }} votes)
-                                </strong>
-                            </span>
-
-                            <form
-                                method="POST"
-                                action="{{ url_for(
-                                    'vote',
-                                    poll_id=item['poll']['id'],
-                                    option_id=option['id']
-                                ) }}"
+                            <option
+                                value="{{ trip['id'] }}"
+                                {% if selected_trip_id == trip['id'] %}
+                                    selected
+                                {% endif %}
                             >
+                                {{ trip['trip_name'] }} • {{ trip['destination'] }} •
+    {% set months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] %}
+    {% set start = trip['start_date'] %}
+    {% set end = trip['end_date'] %}
+    {% if start and end and start|length == 10 and end|length == 10 %}
+        {% set start_month = months[(start[5:7]|int) - 1] %}
+        {% set end_month = months[(end[5:7]|int) - 1] %}
+        {% if start[0:7] == end[0:7] %}
+            {{ start_month }} {{ start[8:10]|int }}–{{ end[8:10]|int }}, {{ end[0:4] }}
+        {% elif start[0:4] == end[0:4] %}
+            {{ start_month }} {{ start[8:10]|int }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% else %}
+            {{ start_month }} {{ start[8:10]|int }}, {{ start[0:4] }} – {{ end_month }} {{ end[8:10]|int }}, {{ end[0:4] }}
+        {% endif %}
+    {% else %}
+        Dates not set
+    {% endif %}
 
-                                <button type="submit">
-                                    Vote
-                                </button>
+                            </option>
 
-                            </form>
+                        {% endfor %}
+
+                    </select>
+
+                </form>
+
+            </section>
+
+
+            {% if selected_trip_id %}
+
+
+            <!-- CREATE VOTE -->
+
+            <section class="voting-card">
+
+                <h2>
+                    Create a Vote ➕
+                </h2>
+
+                <form
+                    class="voting-form"
+                    method="POST"
+                    action="{{ url_for('voting') }}"
+                >
+
+                    <input
+                        type="hidden"
+                        name="trip_id"
+                        value="{{ selected_trip_id }}"
+                    >
+
+
+                    <label>
+                        Question
+                    </label>
+
+                    <input
+                        type="text"
+                        name="question"
+                        placeholder="Where should we eat?"
+                        required
+                    >
+
+
+                    <label>
+                        Option 1
+                    </label>
+
+                    <input
+                        type="text"
+                        name="option1"
+                        placeholder="Italian"
+                        required
+                    >
+
+
+                    <label>
+                        Option 2
+                    </label>
+
+                    <input
+                        type="text"
+                        name="option2"
+                        placeholder="Sushi"
+                        required
+                    >
+
+
+                    <label>
+                        Option 3
+                    </label>
+
+                    <input
+                        type="text"
+                        name="option3"
+                        placeholder="Mexican"
+                    >
+
+
+                    <button type="submit">
+                        Create Vote 🗳️
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- CURRENT VOTES -->
+
+            <section class="voting-card">
+
+                <h2>
+                    Current Votes
+                </h2>
+
+                {% if polls %}
+
+                    {% for item in polls %}
+
+                        <div class="poll-card">
+
+                            <h3>
+                                {{ item["poll"]["question"] }}
+                            </h3>
+
+
+                            {% for option in item["options"] %}
+
+                                <div class="poll-option">
+
+                                    <span>
+                                        {{ option["option_text"] }}
+
+                                        <strong>
+                                            ({{ option["votes"] }} votes)
+                                        </strong>
+                                    </span>
+
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'vote',
+                                            poll_id=item['poll']['id'],
+                                            option_id=option['id']
+                                        ) }}"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="vote-button"
+                                        >
+                                            Vote
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            {% endfor %}
 
                         </div>
 
                     {% endfor %}
 
-                </div>
+                {% else %}
 
-            {% endfor %}
+                    <div class="no-polls">
 
-        {% else %}
+                        <h3>
+                            No Votes Yet! 🗳️
+                        </h3>
 
-            <div class="no-trips">
+                        <p>
+                            Create the first vote for your group.
+                        </p>
 
-                <h3>No votes yet! 🗳️</h3>
+                    </div>
 
-                <p>
-                    Create the first vote for your group.
-                </p>
+                {% endif %}
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- BACK LINK -->
+
+            <div class="back-link">
+
+                <a href="{{ url_for('dashboard') }}">
+                    ← Back to My Trips
+                </a>
 
             </div>
 
-        {% endif %}
+        </div>
 
-    </section>
-
-    {% endif %}
-
-
-    <p>
-        <a href="{{ url_for('dashboard') }}">
-            ← Back to My Trips
-        </a>
-    </p>
-
-</main>
+    </main>
 
 </body>
+
 </html>
