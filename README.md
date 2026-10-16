@@ -16,11 +16,11 @@ TripSync was developed as a team software engineering project using Flask and SQ
 
 **Persona:** Maya — Trip Organizer
 
-**Scenario:** Maya is planning a trip to Miami with four friends. The group is using different group chats to discuss the trip, making it difficult to keep track of the destination, dates, and plans. Maya needs one place to organize the trip and invite her friends. She creates a trip in TripSync, enters the trip name, destination, travel dates, and budget, and invites her friends.
+**Scenario:** Maya is planning a trip to Miami with four friends. The group is using different group chats to discuss the trip, making it difficult to keep track of the destination, dates, and plans. Maya needs one place to organize the trip and invite her friends. She creates a trip in TripSync, enters the trip name, destination, travel dates, and budget, and invites friends who already have TripSync accounts.
 
 **User Story:** As a trip organizer, I want to create a trip with its destination and travel dates so that I can organize the trip information in one place.
 
-**Feature:** Create & Join Trips
+**Feature:** Create & Join Trips — Users can create trips and invite friends who already have TripSync accounts to join.
 
 ---
 
@@ -87,6 +87,8 @@ TripSync was developed as a team software engineering project using Flask and SQ
 ## User Authentication
 
 TripSync provides user authentication so users can create an account, log in, log out, and access their saved trips through their dashboard.
+
+Users must have a TripSync account before they can be added to an existing trip as a friend.
 
 ## Technologies Used
 
