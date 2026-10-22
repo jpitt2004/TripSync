@@ -106,37 +106,7 @@ Users must have a TripSync account before they can be added to an existing trip 
 ## Project Structure
 
 ```text
-TripSync/
-│
-├── app.py
-├── database.db
-├── README.md
-├── TESTING.md
-├── requirements.txt
-├── Dockerfile
-├── .dockerignore
-│
-├── static/
-│   └── style.css
-│
-├── templates/
-│   ├── index.html
-│   ├── login.html
-│   ├── signup.html
-│   ├── dashboard.html
-│   ├── create-trip.html
-│   ├── add-friends.html
-│   ├── itinerary.html
-│   ├── expenses.html
-│   ├── voting.html
-│   ├── checklist.html
-│   └── trip.html
-│
-└── tests/
-    ├── README.md
-    ├── test_auth.py
-    ├── test_trip_features.py
-    └── test_trip_planning.py
+
 ## Running TripSync Locally
 
 ### Requirements
@@ -185,3 +155,36 @@ TripSync is deployed on Render.
 To use the application, create an account, log in, and create a trip. Friends must register for their own TripSync accounts before they can be added to a shared trip.
 
 **Storage limitation:** TripSync uses SQLite on Render. Because the deployed filesystem is temporary, saved accounts and trip information may be lost after a restart or redeployment.
+
+TripSync/
+│
+├── app.py
+├── database.db
+├── README.md
+├── TESTING.md
+├── requirements.txt
+├── Dockerfile
+├── .dockerignore
+│
+├── static/
+│   └── style.css
+│
+├── templates/
+│   ├── index.html
+│   ├── login.html
+│   ├── signup.html
+│   ├── dashboard.html
+│   ├── create-trip.html
+│   ├── add-friends.html
+│   ├── itinerary.html
+│   ├── expenses.html
+│   ├── voting.html
+│   ├── checklist.html
+│   └── trip.html
+│
+└── tests/
+    ├── README.md
+    ├── test_auth.py
+    ├── test_trip_features.py
+    └── test_trip_planning.py
+
