@@ -137,3 +137,51 @@ TripSync/
     ├── test_auth.py
     ├── test_trip_features.py
     └── test_trip_planning.py
+## Running TripSync Locally
+
+### Requirements
+- Python 3
+- Git
+
+### Installation
+1. Clone the repository:
+   `git clone https://github.com/jpitt2004/TripSync.git`
+2. Open the project folder:
+   `cd TripSync`
+3. Install dependencies:
+   `pip install -r requirements.txt`
+4. Start the application:
+   `python app.py`
+5. Open `http://127.0.0.1:5000` in a browser.
+
+## Running TripSync with Docker
+
+Make sure Docker Desktop is running.
+
+1. Build the image:
+   `docker build -t tripsync .`
+2. Run the container:
+   `docker run --rm -p 5000:5000 tripsync`
+3. Open `http://localhost:5000`.
+
+## Testing
+
+TripSync includes automated tests and has also been manually tested.
+
+Run the automated tests using:
+
+`python -m unittest discover -s tests`
+
+**Test result:** 10 automated tests passed during the final verification.
+
+Manual testing included signup, login, trip creation, adding friends, itineraries, expenses, voting, checklists, trip deletion, and navigation.
+
+## Deployment
+
+TripSync is deployed on Render.
+
+**Live application:** https://tripsync-gw90.onrender.com
+
+To use the application, create an account, log in, and create a trip. Friends must register for their own TripSync accounts before they can be added to a shared trip.
+
+**Storage limitation:** TripSync uses SQLite on Render. Because the deployed filesystem is temporary, saved accounts and trip information may be lost after a restart or redeployment.
