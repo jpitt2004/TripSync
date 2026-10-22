@@ -1,5 +1,7 @@
 .venv/
+.venv-1/
 __pycache__/
 *.pyc
 database.db
 .env
+app_backup.py

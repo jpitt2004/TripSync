@@ -1,23 +1,28 @@
 import os
+import psycopg
+from psycopg.rows import dict_row
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash
-import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
+load_dotenv()
+
 app = Flask(__name__)
 
-app.secret_key = "tripsync-secret-key"
+app.secret_key = os.environ["SECRET_KEY"]
 
-DATABASE = "database.db"
-
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # ============================================================
 # DATABASE CONNECTION
 # ============================================================
 
 def get_db_connection():
-    connection = sqlite3.connect(DATABASE)
-    connection.row_factory = sqlite3.Row
+    connection = psycopg.connect(
+        DATABASE_URL,
+        row_factory=dict_row
+    )
     return connection
 
 
@@ -47,130 +52,24 @@ def format_time(time_value):
 # ============================================================
 
 def init_db():
-
+    """Verify the Neon schema exists; tables are managed in Neon SQL Editor."""
     connection = get_db_connection()
-
-    # USERS
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
-
-    # TRIPS
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS trips (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            trip_name TEXT NOT NULL,
-            destination TEXT NOT NULL,
-            start_date TEXT NOT NULL,
-            end_date TEXT NOT NULL,
-            budget REAL NOT NULL DEFAULT 0,
-            FOREIGN KEY(user_id) REFERENCES users(id)
-        )
-    """)
-
-    # TRIP MEMBERS
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS trip_members (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            trip_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            FOREIGN KEY(trip_id) REFERENCES trips(id),
-            FOREIGN KEY(user_id) REFERENCES users(id),
-            UNIQUE(trip_id, user_id)
-        )
-    """)
-
-    # PENDING INVITATIONS
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS pending_invitations (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            trip_id INTEGER NOT NULL,
-            email TEXT NOT NULL,
-            invited_by INTEGER NOT NULL,
-            FOREIGN KEY(trip_id) REFERENCES trips(id),
-            FOREIGN KEY(invited_by) REFERENCES users(id)
-        )
-    """)
-
-    # ITINERARY
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS itinerary (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            trip_id INTEGER NOT NULL,
-            activity TEXT NOT NULL,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
-            location TEXT NOT NULL,
-            FOREIGN KEY(trip_id) REFERENCES trips(id)
-        )
-    """)
-
-    # EXPENSES
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS expenses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            trip_id INTEGER NOT NULL,
-            description TEXT NOT NULL,
-            amount REAL NOT NULL,
-            paid_by INTEGER NOT NULL,
-            FOREIGN KEY(trip_id) REFERENCES trips(id),
-            FOREIGN KEY(paid_by) REFERENCES users(id)
-        )
-    """)
-
-    # POLLS
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS polls (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            trip_id INTEGER NOT NULL,
-            question TEXT NOT NULL,
-            FOREIGN KEY(trip_id) REFERENCES trips(id)
-        )
-    """)
-
-    # POLL OPTIONS
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS poll_options (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            poll_id INTEGER NOT NULL,
-            option_text TEXT NOT NULL,
-            FOREIGN KEY(poll_id) REFERENCES polls(id)
-        )
-    """)
-
-    # POLL VOTES
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS poll_votes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            poll_id INTEGER NOT NULL,
-            option_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            FOREIGN KEY(poll_id) REFERENCES polls(id),
-            FOREIGN KEY(option_id) REFERENCES poll_options(id),
-            FOREIGN KEY(user_id) REFERENCES users(id),
-            UNIQUE(poll_id, user_id)
-        )
-    """)
-
-    # CHECKLIST
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS checklist (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            trip_id INTEGER NOT NULL,
-            item TEXT NOT NULL,
-            completed INTEGER NOT NULL DEFAULT 0,
-            FOREIGN KEY(trip_id) REFERENCES trips(id)
-        )
-    """)
-
-    connection.commit()
-    connection.close()
+    try:
+        tables = connection.execute("""
+            SELECT table_name FROM information_schema.tables
+            WHERE table_schema = 'public'
+        """).fetchall()
+        existing = {row["table_name"] for row in tables}
+        required = {
+            "users", "trips", "trip_members", "pending_invitations",
+            "itinerary", "expenses", "polls", "poll_options",
+            "poll_votes", "checklist"
+        }
+        missing = required - existing
+        if missing:
+            raise RuntimeError(f"Missing Neon tables: {', '.join(sorted(missing))}")
+    finally:
+        connection.close()
 
 
 # ============================================================
@@ -195,11 +94,11 @@ def user_can_access_trip(connection, trip_id):
         LEFT JOIN trip_members
         ON trips.id = trip_members.trip_id
 
-        WHERE trips.id = ?
+        WHERE trips.id = %s
 
         AND (
-            trips.user_id = ?
-            OR trip_members.user_id = ?
+            trips.user_id = %s
+            OR trip_members.user_id = %s
         )
 
         LIMIT 1
@@ -226,8 +125,8 @@ def get_accessible_trips(connection):
         LEFT JOIN trip_members
         ON trips.id = trip_members.trip_id
 
-        WHERE trips.user_id = ?
-        OR trip_members.user_id = ?
+        WHERE trips.user_id = %s
+        OR trip_members.user_id = %s
 
         ORDER BY trips.start_date
     """, (
@@ -286,67 +185,68 @@ def signup():
             return render_template(
                 "signup.html"
             )
-
         if password != confirm_password:
-
             flash(
                 "Passwords do not match.",
                 "error"
             )
+            return render_template("signup.html")
 
-            return render_template(
-                "signup.html"
-            )
-
-        hashed_password = generate_password_hash(
-            password
-        )
-
+        hashed_password = generate_password_hash(password)
         connection = get_db_connection()
 
         try:
-
             connection.execute("""
-                INSERT INTO users
-                (name, email, password)
+                INSERT INTO users (name, email, password)
+                VALUES (%s, %s, %s)
+            """, (name, email, hashed_password))
 
-                VALUES (?, ?, ?)
-            """, (
-                name,
-                email,
-                hashed_password
-            ))
+            # Find the account that was just created
+            new_user = connection.execute(
+                "SELECT id FROM users WHERE email = %s",
+                (email,)
+            ).fetchone()
+
+            # Find invitations sent to this email
+            invitations = connection.execute("""
+                SELECT trip_id
+                FROM pending_invitations
+                WHERE LOWER(email) = %s
+            """, (email,)).fetchall()
+
+            # Add the new user to each invited trip
+            for invitation in invitations:
+                connection.execute("""
+                    INSERT INTO trip_members (trip_id, user_id)
+                    VALUES (%s, %s)
+                    ON CONFLICT (trip_id, user_id) DO NOTHING
+                """, (invitation["trip_id"], new_user["id"]))
+
+            # Remove invitations that have been accepted
+            connection.execute("""
+                DELETE FROM pending_invitations
+                WHERE LOWER(email) = %s
+            """, (email,))
 
             connection.commit()
 
-        except sqlite3.IntegrityError:
-
+        except psycopg.errors.UniqueViolation:
+            connection.rollback()
             connection.close()
-
             flash(
                 "An account with that email already exists.",
                 "error"
             )
-
-            return render_template(
-                "signup.html"
-            )
+            return render_template("signup.html")
 
         connection.close()
-
         flash(
             "Account created successfully! Please log in.",
             "success"
         )
+        return redirect(url_for("login"))
 
-        return redirect(
-            url_for("login")
-        )
-
-    return render_template(
-        "signup.html"
-    )
-
+    return render_template("signup.html")
 
 # ============================================================
 # LOGIN
@@ -372,7 +272,7 @@ def login():
         user = connection.execute("""
             SELECT *
             FROM users
-            WHERE email = ?
+            WHERE email = %s
         """, (
             email,
         )).fetchone()
@@ -513,7 +413,7 @@ def create_trip():
                 budget
             )
 
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (
             session["user_id"],
             trip_name,
@@ -593,7 +493,7 @@ def add_friends():
         user = connection.execute("""
             SELECT *
             FROM users
-            WHERE LOWER(email) = ?
+            WHERE LOWER(email) = %s
         """, (
             email,
         )).fetchone()
@@ -604,8 +504,8 @@ def add_friends():
             existing_member = connection.execute("""
                 SELECT id
                 FROM trip_members
-                WHERE trip_id = ?
-                AND user_id = ?
+                WHERE trip_id = %s
+                AND user_id = %s
             """, (
                 trip_id,
                 user["id"]
@@ -635,7 +535,7 @@ def add_friends():
                         user_id
                     )
 
-                    VALUES (?, ?)
+                    VALUES (%s, %s)
                 """, (
                     trip_id,
                     user["id"]
@@ -654,8 +554,8 @@ def add_friends():
             existing_invitation = connection.execute("""
                 SELECT id
                 FROM pending_invitations
-                WHERE trip_id = ?
-                AND LOWER(email) = ?
+                WHERE trip_id = %s
+                AND LOWER(email) = %s
             """, (
                 trip_id,
                 email
@@ -678,7 +578,7 @@ def add_friends():
                         invited_by
                     )
 
-                    VALUES (?, ?, ?)
+                    VALUES (%s, %s, %s)
                 """, (
                     trip_id,
                     email,
@@ -760,7 +660,7 @@ def itinerary():
                 location
             )
 
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s)
         """, (
             trip_id,
 
@@ -814,7 +714,7 @@ def itinerary():
         rows = connection.execute("""
             SELECT *
             FROM itinerary
-            WHERE trip_id = ?
+            WHERE trip_id = %s
             ORDER BY date, time
         """, (
             selected_trip_id,
@@ -907,7 +807,7 @@ def expenses():
                 paid_by
             )
 
-            VALUES (?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s)
         """, (
             trip_id,
             description,
@@ -953,7 +853,7 @@ def expenses():
             JOIN users
             ON users.id = expenses.paid_by
 
-            WHERE expenses.trip_id = ?
+            WHERE expenses.trip_id = %s
 
             ORDER BY expenses.id DESC
         """, (
@@ -1071,13 +971,14 @@ def voting():
                 question
             )
 
-            VALUES (?, ?)
+            VALUES (%s, %s)
+            RETURNING id
         """, (
             trip_id,
             question
         ))
 
-        poll_id = cursor.lastrowid
+        poll_id = cursor.fetchone()["id"]
 
         for option in options:
 
@@ -1088,7 +989,7 @@ def voting():
                     option_text
                 )
 
-                VALUES (?, ?)
+                VALUES (%s, %s)
             """, (
                 poll_id,
                 option
@@ -1123,7 +1024,7 @@ def voting():
         poll_rows = connection.execute("""
             SELECT *
             FROM polls
-            WHERE trip_id = ?
+            WHERE trip_id = %s
             ORDER BY id DESC
         """, (
             selected_trip_id,
@@ -1142,7 +1043,7 @@ def voting():
                 ON poll_votes.option_id =
                    poll_options.id
 
-                WHERE poll_options.poll_id = ?
+                WHERE poll_options.poll_id = %s
 
                 GROUP BY poll_options.id
 
@@ -1190,7 +1091,7 @@ def vote(
     poll = connection.execute("""
         SELECT *
         FROM polls
-        WHERE id = ?
+        WHERE id = %s
     """, (
         poll_id,
     )).fetchone()
@@ -1234,7 +1135,7 @@ def vote(
                 user_id
             )
 
-            VALUES (?, ?, ?)
+            VALUES (%s, %s, %s)
         """, (
             poll_id,
             option_id,
@@ -1248,8 +1149,9 @@ def vote(
             "success"
         )
 
-    except sqlite3.IntegrityError:
+    except psycopg.errors.UniqueViolation:
 
+        connection.rollback()
         flash(
             "You already voted in this poll.",
             "error"
@@ -1321,7 +1223,7 @@ def checklist():
                 item
             )
 
-            VALUES (?, ?)
+            VALUES (%s, %s)
         """, (
             trip_id,
             item
@@ -1356,7 +1258,7 @@ def checklist():
         items = connection.execute("""
             SELECT *
             FROM checklist
-            WHERE trip_id = ?
+            WHERE trip_id = %s
             ORDER BY completed, id DESC
         """, (
             selected_trip_id,
@@ -1393,7 +1295,7 @@ def toggle_checklist(item_id):
     item = connection.execute("""
         SELECT *
         FROM checklist
-        WHERE id = ?
+        WHERE id = %s
     """, (
         item_id,
     )).fetchone()
@@ -1432,7 +1334,7 @@ def toggle_checklist(item_id):
                 ELSE 1
             END
 
-        WHERE id = ?
+        WHERE id = %s
     """, (
         item_id,
     ))
@@ -1469,7 +1371,7 @@ def trip_details(trip_id):
     trip = connection.execute("""
         SELECT *
         FROM trips
-        WHERE id = ?
+        WHERE id = %s
     """, (
         trip_id,
     )).fetchone()
@@ -1511,7 +1413,7 @@ def trip_details(trip_id):
 
         FROM users
 
-        WHERE id = ?
+        WHERE id = %s
     """, (
         trip["user_id"],
     )).fetchone()
@@ -1527,7 +1429,7 @@ def trip_details(trip_id):
         ON users.id =
            trip_members.user_id
 
-        WHERE trip_members.trip_id = ?
+        WHERE trip_members.trip_id = %s
     """, (
         trip_id,
     )).fetchall()
@@ -1568,8 +1470,8 @@ def delete_trip(trip_id):
     trip = connection.execute("""
         SELECT *
         FROM trips
-        WHERE id = ?
-        AND user_id = ?
+        WHERE id = %s
+        AND user_id = %s
     """, (
         trip_id,
         session["user_id"]
@@ -1591,7 +1493,7 @@ def delete_trip(trip_id):
     # Delete checklist items
     connection.execute("""
         DELETE FROM checklist
-        WHERE trip_id = ?
+        WHERE trip_id = %s
     """, (
         trip_id,
     ))
@@ -1599,7 +1501,7 @@ def delete_trip(trip_id):
     # Delete expenses
     connection.execute("""
         DELETE FROM expenses
-        WHERE trip_id = ?
+        WHERE trip_id = %s
     """, (
         trip_id,
     ))
@@ -1607,7 +1509,7 @@ def delete_trip(trip_id):
     # Delete itinerary activities
     connection.execute("""
         DELETE FROM itinerary
-        WHERE trip_id = ?
+        WHERE trip_id = %s
     """, (
         trip_id,
     ))
@@ -1618,7 +1520,7 @@ def delete_trip(trip_id):
         WHERE poll_id IN (
             SELECT id
             FROM polls
-            WHERE trip_id = ?
+            WHERE trip_id = %s
         )
     """, (
         trip_id,
@@ -1630,7 +1532,7 @@ def delete_trip(trip_id):
         WHERE poll_id IN (
             SELECT id
             FROM polls
-            WHERE trip_id = ?
+            WHERE trip_id = %s
         )
     """, (
         trip_id,
@@ -1639,7 +1541,7 @@ def delete_trip(trip_id):
     # Delete polls
     connection.execute("""
         DELETE FROM polls
-        WHERE trip_id = ?
+        WHERE trip_id = %s
     """, (
         trip_id,
     ))
@@ -1647,7 +1549,7 @@ def delete_trip(trip_id):
     # Delete pending invitations
     connection.execute("""
         DELETE FROM pending_invitations
-        WHERE trip_id = ?
+        WHERE trip_id = %s
     """, (
         trip_id,
     ))
@@ -1655,7 +1557,7 @@ def delete_trip(trip_id):
     # Delete trip members
     connection.execute("""
         DELETE FROM trip_members
-        WHERE trip_id = ?
+        WHERE trip_id = %s
     """, (
         trip_id,
     ))
@@ -1663,8 +1565,8 @@ def delete_trip(trip_id):
     # Finally delete the trip itself
     connection.execute("""
         DELETE FROM trips
-        WHERE id = ?
-        AND user_id = ?
+        WHERE id = %s
+        AND user_id = %s
     """, (
         trip_id,
         session["user_id"]
