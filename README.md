@@ -252,7 +252,25 @@ http://127.0.0.1:5000
 
 Once the application opens, create an account, log in, and begin planning a trip.
 
-**Database setup:** The PostgreSQL database must already contain the tables required by TripSync. The application does not automatically create the full database schema when it starts.
+**Database setup:** TripSync uses Neon PostgreSQL for persistent database storage.
+
+Before running the application for the first time:
+
+Create a PostgreSQL database using Neon or another PostgreSQL provider.
+
+Open the database's SQL editor.
+
+Copy the contents of the included schema.sql file into the editor.
+
+Execute the SQL script to create the required tables and relationships.
+
+Add your PostgreSQL connection string to the DATABASE_URL variable in your .env file.
+
+Configure the SECRET_KEY environment variable.
+
+After completing these steps, run python app.py to start TripSync.
+
+Important: Run schema.sql only when setting up a new database. Do not run it against an existing database containing TripSync data without reviewing the script first.
 
 ## Running TripSync with Docker
 
